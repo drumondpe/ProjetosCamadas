@@ -37,9 +37,9 @@ def main():
         #seus dados a serem transmitidos são um array bytes a serem transmitidos. Gere esta lista com o 
         #nome de txBuffer. Esla sempre irá armazenar os dados a serem enviados.
         
-        txBuffer = ""
+        txBuffer = []
 
-        comando10 = [b"BB"]                 #1 bytes
+        comando10 = [b"\xBB"]                 #1 bytes
         comando0 = [b"\xCC"]                #1 bytes
         comando1 = [b"\x00\x00\x00\x00"]    #4 bytes
         comando2 = [b"\x00\x00\xAA\x00"]    #4 bytes
@@ -51,7 +51,7 @@ def main():
         comando8 = [b"\x00"]                #1 byte
         comando9 = [b"\xFF"]                #1 byte
 
-
+        print('Gerando comandos...')
         quantidade = random.randint(10, 30)
         for i in range(quantidade):
             # comando0 => separador
