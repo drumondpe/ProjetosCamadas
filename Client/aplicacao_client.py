@@ -5,20 +5,15 @@
 #Aplicação
 ####################################################
 
-
-#esta é a camada superior, de aplicação do seu software de comunicação serial UART.
-#para acompanhar a execução e identificar erros, construa prints ao longo do código! 
-
-
 from Client.enlace import *
 import time
 import numpy as np
+import random 
 
 # voce deverá descomentar e configurar a porta com através da qual ira fazer comunicaçao
 #   para saber a sua porta, execute no terminal :
 #   python -m serial.tools.list_ports
 # se estiver usando windows, o gerenciador de dispositivos informa a porta
-
 #use uma das 3 opcoes para atribuir à variável a porta usada
 #serialName = "/dev/ttyACM0"           # Ubuntu (variacao de)
 #serialName = "/dev/tty.usbmodem1411" # Mac    (variacao de)
@@ -30,38 +25,87 @@ def main():
         print("Iniciou o main")
         #declaramos um objeto do tipo enlace com o nome "com". Essa é a camada inferior à aplicação. Observe que um parametro
         #para declarar esse objeto é o nome da porta.
-        com1 = enlace(serialName)
-        
-    
+        com3 = enlace(serialName)
         # Ativa comunicacao. Inicia os threads e a comunicação seiral 
-        com1.enable()
+        com3.enable()
+
+        #### Resolvendo Bug ####
+        time.sleep(.2)
+        com3.sendData(b'00')
+        time.sleep(1)
+        #### Resolvendo Bug ####
+
         #Se chegamos até aqui, a comunicação foi aberta com sucesso. Faça um print para informar.
         print("Abriu a comunicação")
         
+
         #############################################   
         #aqui você deverá gerar os dados a serem transmitidos. 
         #seus dados a serem transmitidos são um array bytes a serem transmitidos. Gere esta lista com o 
         #nome de txBuffer. Esla sempre irá armazenar os dados a serem enviados.
         
-        barquinho_saida = "barquinho.png"
-        barquinho_entrada = "barquinho_saida.png"
+        txBuffer = []
 
-        print("carregando imagem para transmissão ...")
-        print("imagem: {}" .format(barquinho_saida))
-        print("-------------------------")
-        txBuffer = open(barquinho_saida, "rb").read()
+        comando10 = [b"\xBB"]                 #1 bytes
+        comando0 = [b"\xCC"]                #1 bytes
+        comando1 = [b"\x00\x00\x00\x00"]    #4 bytes
+        comando2 = [b"\x00\x00\xAA\x00"]    #4 bytes
+        comando3 = [b"\xAA\x00\x00"]        #3 bytes
+        comando4 = [b"\x00\xAA\x00"]        #3 bytes
+        comando5 = [b"\x00\x00\xAA"]        #3 bytes
+        comando6 = [b"\x00\xAA"]            #2 bytes
+        comando7 = [b"\xAA\x00"]            #2 bytes
+        comando8 = [b"\x00"]                #1 byte
+        comando9 = [b"\xFF"]                #1 byte
 
-        print("Salvando dados no arquivo :")
-        print("- {}".format(barquinho_entrada))
-        f = open(barquinho_entrada, 'wb')
-        f.write(txBuffer)
+        print('')
+        print('Gerando comandos...')
+        quantidade = random.randint(10, 30)
+        for i in range(quantidade):
+            # comando0 => separador
+            txBuffer += comando0
 
-        f.close()
+            comando = random.randint(1, 9)
+            if comando == 1:
+                txBuffer += comando1
+            if comando == 2:
+                txBuffer += comando2
+            if comando == 3:
+                txBuffer += comando3
+            if comando == 4:
+                txBuffer += comando4
+            if comando == 5:
+                txBuffer += comando5
+            if comando == 6:
+                txBuffer += comando6
+            if comando == 7:
+                txBuffer += comando7
+            if comando == 8:
+                txBuffer += comando8
+            if comando == 9:
+                txBuffer += comando9
+
+        print('')
+        print('Quantidade de comandos: {}' .format(quantidade))
+        print('Quantidade de bytes: {}' .format(len(txBuffer)))
+        print('Array de bytes: {}' .format(txBuffer))
+
+        txBuffer.append(comando10)
+        txBuffer.append(bytearray(quantidade))
+
+        # comando10 => finalizador
+        # txBuffer += comando10
+
+
+        
+        # f = open(barquinho_entrada, 'wb')
+        # f.write(txBuffer)
+        # f.close()
 
         #############################################
 
         #txBuffer = imagem em bytes!
-        txBuffer = b'\x12\x13\xAA'  #isso é um array de bytes
+        #txBuffer = b'\x12\x13\xAA'  #isso é um array de bytes
        
         print("meu array de bytes tem tamanho {}" .format(len(txBuffer)))
         #faça aqui uma conferência do tamanho do seu txBuffer, ou seja, quantos bytes serão enviados.
@@ -73,11 +117,11 @@ def main():
         #Cuidado! Apenas trasmita arrays de bytes!
                
         
-        com1.sendData(np.asarray(txBuffer))  #as array apenas como boa pratica para casos de ter uma outra forma de dados
+        com3.sendData(np.asarray(txBuffer))  #as array apenas como boa pratica para casos de ter uma outra forma de dados
           
         # A camada enlace possui uma camada inferior, TX possui um método para conhecermos o status da transmissão
         # O método não deve estar fincionando quando usado como abaixo. deve estar retornando zero. Tente entender como esse método funciona e faça-o funcionar.
-        txSize = com1.tx.getStatus()
+        txSize = com3.tx.getStatus()
         print('enviou = {}' .format(txSize))
         
         #Agora vamos iniciar a recepção dos dados. Se algo chegou ao RX, deve estar automaticamente guardado
@@ -89,7 +133,7 @@ def main():
       
         #acesso aos bytes recebidos
         txLen = len(txBuffer)
-        rxBuffer, nRx = com1.getData(txLen)
+        rxBuffer, nRx = com3.getData(txLen)
         print("recebeu {} bytes" .format(len(rxBuffer)))
         
         for i in range(len(rxBuffer)):
@@ -102,12 +146,12 @@ def main():
         print("-------------------------")
         print("Comunicação encerrada")
         print("-------------------------")
-        com1.disable()
+        com3.disable()
         
     except Exception as erro:
         print("ops! :-\\")
         print(erro)
-        com1.disable()
+        com3.disable()
         
 
     #so roda o main quando for executado do terminal ... se for chamado dentro de outro modulo nao roda
