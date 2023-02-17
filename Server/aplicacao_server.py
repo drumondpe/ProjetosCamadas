@@ -30,7 +30,10 @@ def main():
         com3.enable()
 
         #### Resolvendo Bug ####
-
+        print('esperando 1 byte de sacrificio')
+        rxBuffer, nRx = com3.getData(1)
+        com3.rx.clearBuffer()
+        time.sleep(1)
         #### Resolvendo Bug ####
 
         #Se chegamos até aqui, a comunicação foi aberta com sucesso. Faça um print para informar.
@@ -42,63 +45,21 @@ def main():
         #seus dados a serem transmitidos são um array bytes a serem transmitidos. Gere esta lista com o 
         #nome de txBuffer. Esla sempre irá armazenar os dados a serem enviados.
         
-        txBuffer = []
+        contador = 0
 
-        comando10 = [b"\xBB"]               #1 bytes
-        comando0 = [b"\xCC"]                #1 bytes
-        comando1 = [b"\x00\x00\x00\x00"]    #4 bytes
-        comando2 = [b"\x00\x00\xAA\x00"]    #4 bytes
-        comando3 = [b"\xAA\x00\x00"]        #3 bytes
-        comando4 = [b"\x00\xAA\x00"]        #3 bytes
-        comando5 = [b"\x00\x00\xAA"]        #3 bytes
-        comando6 = [b"\x00\xAA"]            #2 bytes
-        comando7 = [b"\xAA\x00"]            #2 bytes
-        comando8 = [b"\x00"]                #1 byte
-        comando9 = [b"\xFF"]                #1 byte
+        while com3.getData(1) != None:
+            txBuffer = com3.getData(1)                      #pega o tamanho do comando
+            txBuffer = com3.getData(int(txBuffer))          #pega o comando
+            contador += 1                                   #contador de comandos
 
-        print('')
-        print('Gerando comandos...')
-        quantidade = random.randint(10, 30)
-        for i in range(quantidade):
-            # comando0 => separador
-            txBuffer += comando0
-
-            comando = random.randint(1, 9)
-            if comando == 1:
-                txBuffer += comando1
-            if comando == 2:
-                txBuffer += comando2
-            if comando == 3:
-                txBuffer += comando3
-            if comando == 4:
-                txBuffer += comando4
-            if comando == 5:
-                txBuffer += comando5
-            if comando == 6:
-                txBuffer += comando6
-            if comando == 7:
-                txBuffer += comando7
-            if comando == 8:
-                txBuffer += comando8
-            if comando == 9:
-                txBuffer += comando9
-
-        print('')
-        print('Quantidade de comandos: {}' .format(quantidade))
-        print('Quantidade de bytes: {}' .format(len(txBuffer)))
-        print('Array de bytes: {}' .format(txBuffer))
-
-        txBuffer.append(comando10)
-        txBuffer.append(bytearray(quantidade))
-
-        # comando10 => finalizador
-        # txBuffer += comando10
-
+        contador = contador.to_bytes(2, byteorder='big')  #transforma o contador em bytes
 
         
-        # f = open(barquinho_entrada, 'wb')
-        # f.write(txBuffer)
-        # f.close()
+
+       
+
+
+
 
         #############################################
 

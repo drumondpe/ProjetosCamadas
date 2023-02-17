@@ -61,38 +61,35 @@ def main():
         print('')
         print('Gerando comandos...')
         quantidade = random.randint(10, 30)
+
         for i in range(quantidade):
-            # comando0 => separador
-            txBuffer += comando0
 
             comando = random.randint(1, 9)
             if comando == 1:
-                txBuffer += comando1
+                txBuffer += [b'\x04'] + comando1
             if comando == 2:
-                txBuffer += comando2
+                txBuffer += [b'\x04'] + comando2
             if comando == 3:
-                txBuffer += comando3
+                txBuffer += [b'\x03'] + comando3
             if comando == 4:
-                txBuffer += comando4
+                txBuffer += [b'\x03'] + comando4
             if comando == 5:
-                txBuffer += comando5
+                txBuffer += [b'\x03'] + comando5
             if comando == 6:
-                txBuffer += comando6
+                txBuffer += [b'\x02'] + comando6
             if comando == 7:
-                txBuffer += comando7
+                txBuffer += [b'\x02'] + comando7
             if comando == 8:
-                txBuffer += comando8
+                txBuffer += [b'\x01'] + comando8
             if comando == 9:
-                txBuffer += comando9
+                txBuffer += [b'\x01'] + comando9
 
         print('')
         print('Quantidade de comandos: {}' .format(quantidade))
         print('Quantidade de bytes: {}' .format(len(txBuffer)))
         print('Array de bytes: {}' .format(txBuffer))
-
-        txBuffer.append(comando10)
-        txBuffer.append(bytearray(quantidade))
-
+        print('')
+        
         # comando10 => finalizador
         # txBuffer += comando10
 
