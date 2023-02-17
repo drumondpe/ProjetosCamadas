@@ -46,7 +46,6 @@ def main():
         
         txBuffer = []
 
-        comando10 = [b"\xBB"]                 #1 bytes
         comando0 = [b"\xCC"]                #1 bytes
         comando1 = [b"\x00\x00\x00\x00"]    #4 bytes
         comando2 = [b"\x00\x00\xAA\x00"]    #4 bytes
@@ -84,20 +83,13 @@ def main():
             if comando == 9:
                 txBuffer += [b'\x01'] + comando9
 
+        txBuffer += comando0
+
         print('')
         print('Quantidade de comandos: {}' .format(quantidade))
-        print('Quantidade de bytes: {}' .format(len(txBuffer)))
         print('Array de bytes: {}' .format(txBuffer))
         print('')
-        
-        # comando10 => finalizador
-        # txBuffer += comando10
 
-
-        
-        # f = open(barquinho_entrada, 'wb')
-        # f.write(txBuffer)
-        # f.close()
 
         #############################################
 
@@ -116,6 +108,9 @@ def main():
         
         com3.sendData(np.asarray(txBuffer))  #as array apenas como boa pratica para casos de ter uma outra forma de dados
           
+        resposta = com3.getData(1)
+        print("Quantidade recebida pelo server: ". format(resposta))
+
         # A camada enlace possui uma camada inferior, TX possui um método para conhecermos o status da transmissão
         # O método não deve estar fincionando quando usado como abaixo. deve estar retornando zero. Tente entender como esse método funciona e faça-o funcionar.
         txSize = com3.tx.getStatus()
