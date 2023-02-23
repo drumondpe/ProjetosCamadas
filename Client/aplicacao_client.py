@@ -107,15 +107,19 @@ def main():
                
         
         com3.sendData(np.asarray(txBuffer))  #as array apenas como boa pratica para casos de ter uma outra forma de dados
-          
+        time.sleep(1)
+
         resposta = com3.getData(1)
         print("Quantidade recebida pelo server: ". format(resposta))
 
         # A camada enlace possui uma camada inferior, TX possui um método para conhecermos o status da transmissão
         # O método não deve estar fincionando quando usado como abaixo. deve estar retornando zero. Tente entender como esse método funciona e faça-o funcionar.
-        txSize = com3.tx.getStatus()
-        print('enviou = {}' .format(txSize))
         
+        ###### talvez mudar
+        # txSize = com3.tx.getStatus()
+        # print('enviou = {}' .format(txSize))
+        ######
+
         #Agora vamos iniciar a recepção dos dados. Se algo chegou ao RX, deve estar automaticamente guardado
         #Observe o que faz a rotina dentro do thread RX
         #print um aviso de que a recepção vai começar.
@@ -124,12 +128,12 @@ def main():
         #Veja o que faz a funcao do enlaceRX  getBufferLen
       
         #acesso aos bytes recebidos
-        txLen = len(txBuffer)
-        rxBuffer, nRx = com3.getData(txLen)
-        print("recebeu {} bytes" .format(len(rxBuffer)))
+        # txLen = len(txBuffer)
+        # rxBuffer, nRx = com3.getData(txLen)
+        # print("recebeu {} bytes" .format(len(rxBuffer)))
         
-        for i in range(len(rxBuffer)):
-            print("recebeu {}" .format(rxBuffer[i]))
+        # for i in range(len(rxBuffer)):
+        #     print("recebeu {}" .format(rxBuffer[i]))
         
 
             
