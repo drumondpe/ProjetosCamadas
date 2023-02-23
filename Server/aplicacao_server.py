@@ -47,10 +47,14 @@ def main():
         
         contador = 0
 
-        while com3.getData(1) != [b"\xCC"]:
+        while True:
             txBuffer = com3.getData(1)                      #pega o tamanho do comando
-            txBuffer = com3.getData(int.from_bytes(txBuffer, byteorder="little"))          #pega o comando (verificar se esta pegando o tamanho do comando)
+            if txBuffer == [b"\xCC"]:
+                break
+            
+            txBuffer = com3.getData(int.from_bytes(txBuffer[0], byteorder="little"))       #pega o comando (verificar se esta pegando o tamanho do comando)
             contador += 1                                   #contador de comandos
+
 
         contador = contador.to_bytes(1, byteorder='big')    #transforma o contador em bytes
         txBuffer = contador
