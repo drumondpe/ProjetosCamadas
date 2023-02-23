@@ -60,9 +60,9 @@ def main():
         print('contador de comandos: {}' .format(contador))
         print('')
 
-        contador = contador.to_bytes(1, byteorder='big')    #transforma o contador em bytes
-        txBuffer = contador
-
+        txBuffer = contador.to_bytes(2, byteorder='big')    #transforma o contador em bytes
+        com3.sendData(np.asarray(txBuffer))  #as array apenas como boa pratica para casos de ter uma outra forma de dados
+        print('enviou o contador de comandos')
 
         #############################################
 
@@ -77,7 +77,6 @@ def main():
         #Cuidado! Apenas trasmita arrays de bytes!
                
         
-        com3.sendData(np.asarray(txBuffer))  #as array apenas como boa pratica para casos de ter uma outra forma de dados
           
         # A camada enlace possui uma camada inferior, TX possui um método para conhecermos o status da transmissão
         # O método não deve estar fincionando quando usado como abaixo. deve estar retornando zero. Tente entender como esse método funciona e faça-o funcionar.
