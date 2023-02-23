@@ -5,7 +5,7 @@
 #Aplicação
 ####################################################
 
-from Client.enlace import *
+from enlace import *
 import time
 import numpy as np
 import random 
