@@ -46,16 +46,16 @@ def main():
         
         txBuffer = []
 
-        comando0 = [b"\xCC"]                #1 bytes
-        comando1 = [b"\x00\x00\x00\x00"]    #4 bytes
-        comando2 = [b"\x00\x00\xAA\x00"]    #4 bytes
-        comando3 = [b"\xAA\x00\x00"]        #3 bytes
-        comando4 = [b"\x00\xAA\x00"]        #3 bytes
-        comando5 = [b"\x00\x00\xAA"]        #3 bytes
-        comando6 = [b"\x00\xAA"]            #2 bytes
-        comando7 = [b"\xAA\x00"]            #2 bytes
-        comando8 = [b"\x00"]                #1 byte
-        comando9 = [b"\xFF"]                #1 byte
+        comando0 = [b'\xCC']                #1 bytes
+        comando1 = [b'\x00', b'\x00', b'\x00', b'\x00']    #4 bytes
+        comando2 = [b'\x00', b'\x00', b'\xAA', b'\x00']    #4 bytes
+        comando3 = [b'\xAA', b'\x00', b'\x00']        #3 bytes
+        comando4 = [b'\x00', b'\xAA', b'\x00']        #3 bytes
+        comando5 = [b'\x00', b'\x00', b'\xAA']        #3 bytes
+        comando6 = [b'\x00', b'\xAA']            #2 bytes
+        comando7 = [b'\xAA', b'\x00']            #2 bytes
+        comando8 = [b'\x00']                #1 byte
+        comando9 = [b'\xFF']                #1 byte
 
         print('')
         print('Gerando comandos...')

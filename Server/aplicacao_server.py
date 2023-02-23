@@ -51,26 +51,22 @@ def main():
             txBuffer = com3.getData(1)                      #pega o tamanho do comando
             if txBuffer == [b"\xCC"]:
                 break
-            
+
             txBuffer = com3.getData(int.from_bytes(txBuffer[0], byteorder="little"))       #pega o comando (verificar se esta pegando o tamanho do comando)
             contador += 1                                   #contador de comandos
 
+        print('')
+        print('contador de comandos: {}' .format(contador))
+        print('')
 
         contador = contador.to_bytes(1, byteorder='big')    #transforma o contador em bytes
         txBuffer = contador
-        
-
-       
-
-
 
 
         #############################################
 
         #txBuffer = imagem em bytes!
         #txBuffer = b'\x12\x13\xAA'  #isso é um array de bytes
-       
-        print("meu array de bytes tem tamanho {}" .format(len(txBuffer)))
         #faça aqui uma conferência do tamanho do seu txBuffer, ou seja, quantos bytes serão enviados.
        
             
