@@ -89,14 +89,14 @@ def main():
         print('Quantidade de comandos: {}' .format(quantidade))
         print('Array de bytes: {}' .format(txBuffer))
         print('')
-
+        print('Esperando resposta do server...')
+        print('')
 
         #############################################
 
         #txBuffer = imagem em bytes!
         #txBuffer = b'\x12\x13\xAA'  #isso é um array de bytes
        
-        print("meu array de bytes tem tamanho {}" .format(len(txBuffer)))
         #faça aqui uma conferência do tamanho do seu txBuffer, ou seja, quantos bytes serão enviados.
        
             
