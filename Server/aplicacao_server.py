@@ -51,8 +51,10 @@ def main():
             txBuffer = com3.getData(1)                      #pega o tamanho do comando
             if txBuffer == [b"\xCC"]:
                 break
-
-            txBuffer = com3.getData(int.from_bytes(txBuffer[0], byteorder="little"))       #pega o comando (verificar se esta pegando o tamanho do comando)
+            
+            inteiro = int.from_bytes(txBuffer[0], byteorder="big")
+            print(inteiro)
+            txBuffer = com3.getData(inteiro)       #pega o comando (verificar se esta pegando o tamanho do comando)
             contador += 1                                   #contador de comandos
 
         print('')
