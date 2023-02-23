@@ -53,7 +53,6 @@ def main():
                 break
             
             inteiro = int.from_bytes(txBuffer[0], byteorder="big")
-            print(inteiro)
             txBuffer = com3.getData(inteiro)       #pega o comando (verificar se esta pegando o tamanho do comando)
             contador += 1                                   #contador de comandos
 
