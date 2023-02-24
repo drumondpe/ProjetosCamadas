@@ -14,9 +14,6 @@ import random
 #   para saber a sua porta, execute no terminal :
 #   python -m serial.tools.list_ports
 # se estiver usando windows, o gerenciador de dispositivos informa a porta
-#use uma das 3 opcoes para atribuir à variável a porta usada
-#serialName = "/dev/ttyACM0"           # Ubuntu (variacao de)
-#serialName = "/dev/tty.usbmodem1411" # Mac    (variacao de)
 serialName = "COM3"                  # Windows(variacao de)
 
 
@@ -40,9 +37,7 @@ def main():
         
 
         #############################################   
-        #aqui você deverá gerar os dados a serem transmitidos. 
-        #seus dados a serem transmitidos são um array bytes a serem transmitidos. Gere esta lista com o 
-        #nome de txBuffer. Esla sempre irá armazenar os dados a serem enviados.
+        # Gera dados a serem enviados
         
         txBuffer = []
 
@@ -89,30 +84,38 @@ def main():
         print('Quantidade de comandos: {}' .format(quantidade))
         print('Array de bytes: {}' .format(txBuffer))
         print('')
-        print('Esperando resposta do server...')
-        print('')
+        
 
-        #############################################
-
-        #txBuffer = imagem em bytes!
-        #txBuffer = b'\x12\x13\xAA'  #isso é um array de bytes
-       
-        #faça aqui uma conferência do tamanho do seu txBuffer, ou seja, quantos bytes serão enviados.
-       
-            
+        #############################################  
         #finalmente vamos transmitir os todos. Para isso usamos a funçao sendData que é um método da camada enlace.
         #faça um print para avisar que a transmissão vai começar.
         #tente entender como o método send funciona!
         #Cuidado! Apenas trasmita arrays de bytes!
                
-        
         com3.sendData(np.asarray(txBuffer))  #as array apenas como boa pratica para casos de ter uma outra forma de dados
-        time.sleep(1)
+        
+        print('Esperando resposta do server...')
+        print('')
+
+        time_start = time.time()
+        while com3.rx.getIsEmpty() == True:
+            if time.time() - time_start > 5:
+                print('Tempo de resposta excedido')
+                print('Encerrando aplicação...')
+                com3.disable()
+                exit()
 
         resposta = com3.getData(1)
+
         resposta = int.from_bytes(resposta[0], byteorder="big")
         print("Quantidade recebida pelo server: {} ". format(resposta))
 
+        if resposta != quantidade:
+            print('Quantidade de comandos enviados e recebidos não conferem')
+            print('Encerrando aplicação...')
+            com3.disable()
+            exit()
+            
         # A camada enlace possui uma camada inferior, TX possui um método para conhecermos o status da transmissão
         # O método não deve estar fincionando quando usado como abaixo. deve estar retornando zero. Tente entender como esse método funciona e faça-o funcionar.
         
