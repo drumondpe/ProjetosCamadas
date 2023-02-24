@@ -110,7 +110,8 @@ def main():
         time.sleep(1)
 
         resposta = com3.getData(1)
-        print("Quantidade recebida pelo server: ". format(resposta))
+        resposta = int.from_bytes(resposta[0], byteorder="big")
+        print("Quantidade recebida pelo server: {} ". format(resposta))
 
         # A camada enlace possui uma camada inferior, TX possui um método para conhecermos o status da transmissão
         # O método não deve estar fincionando quando usado como abaixo. deve estar retornando zero. Tente entender como esse método funciona e faça-o funcionar.
