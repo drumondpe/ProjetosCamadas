@@ -61,7 +61,11 @@ def main():
         print('')
 
         txBuffer = contador.to_bytes(2, byteorder='big')    #transforma o contador em bytes
+        
+        ###############################################
+        #### COMENTAR ABAIXO PARA ERRO DE TIME OUT ####
         com3.sendData(np.asarray(txBuffer))  #as array apenas como boa pratica para casos de ter uma outra forma de dados
+        ###############################################
         print('enviou o contador de comandos')
 
         #############################################
