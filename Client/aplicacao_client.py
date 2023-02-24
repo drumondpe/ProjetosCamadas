@@ -8,7 +8,8 @@
 from enlace import *
 import time
 import numpy as np
-import random 
+import random
+from Complementar import *
 
 # voce deverá descomentar e configurar a porta com através da qual ira fazer comunicaçao
 #   para saber a sua porta, execute no terminal :
@@ -39,37 +40,7 @@ def main():
         #############################################   
         # Gera dados a serem enviados
         
-        ### COMEÇO DA HEAD ###
-        # HEAD DEVE TER 12 BYTES #
-        def head(tipo_pacote, tamanho_payload, numero_pacote):
-            head_bytes = []
-            
-            # Tipo do pacote
-            if tipo_pacote == "dados":
-                head_bytes += [b'\x00']
-            elif tipo_pacote == "comando":
-                head_bytes += [b'\x01']
-            else:
-                print('Tipo de pacote não reconhecido')
-                print('Encerrando aplicação...')
-                com3.disable()
-                exit()
-
-            # Tamanho do payload
-            tamanho_pacote = tamanho_payload + 15                           # 12 do head + 3 do payload
-            tamanho_pacote = tamanho_pacote.to_bytes(1, byteorder="big")    # transformando em bytes
-            head_bytes += [tamanho_pacote]                                  # adicionando ao head
-
-            # Numero do pacote
-            numero_pacote = numero_pacote.to_bytes(1, byteorder="big")
-            head_bytes += [numero_pacote]
-            
-            # Completa o head com zeros
-            for i in range(9):
-                head_bytes += [b'\x00']
-            
-            return head_bytes
-        ### FIM DA HEAD ######
+    
 
         txBuffer = []
 

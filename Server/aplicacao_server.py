@@ -9,6 +9,7 @@ from enlace import *
 import time
 import numpy as np
 import random 
+from Complementar import *
 
 # voce deverá descomentar e configurar a porta com através da qual ira fazer comunicaçao
 #   para saber a sua porta, execute no terminal :
@@ -45,6 +46,8 @@ def main():
         #seus dados a serem transmitidos são um array bytes a serem transmitidos. Gere esta lista com o 
         #nome de txBuffer. Esla sempre irá armazenar os dados a serem enviados.
         
+
+
         contador = 0
 
         while True:
