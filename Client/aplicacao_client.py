@@ -106,7 +106,6 @@ def main():
                 exit()
 
         resposta = com3.getData(1)
-
         resposta = int.from_bytes(resposta[0], byteorder="big")
         print("Quantidade recebida pelo server: {} ". format(resposta))
 

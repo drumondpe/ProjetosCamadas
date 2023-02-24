@@ -56,11 +56,16 @@ def main():
             txBuffer = com3.getData(inteiro)       #pega o comando (verificar se esta pegando o tamanho do comando)
             contador += 1                                   #contador de comandos
 
+        #### CASO 2 ####
+        #contador += 1
+        ################
+
         print('')
         print('contador de comandos: {}' .format(contador))
         print('')
 
-        txBuffer = contador.to_bytes(2, byteorder='big')    #transforma o contador em bytes
+
+        txBuffer = contador.to_bytes(1, byteorder='big')    #transforma o contador em bytes
         
         ###############################################
         #### COMENTAR ABAIXO PARA ERRO DE TIME OUT ####
