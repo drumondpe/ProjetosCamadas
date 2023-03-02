@@ -39,8 +39,8 @@ def main():
         # cria_pacote(tipo_pacote, tamanho_payload, numero_pacote, payload, com3)
         handshake = True
         while handshake:
-            pergunta = [b'\xEE', b'\xEE', b'\xEE']
-            txBuffer = cria_pacote('comando', 3, 0, pergunta, com3)
+            pergunta = []
+            txBuffer = cria_pacote('handshake', 0, 0, pergunta, com3)
 
             # Envia a pergunta
             print('Enviando pergunta...')
@@ -64,8 +64,16 @@ def main():
                 handshake = False
 
         ##### Servidor vivo #####
-        print('Servidor vivo')
-        print('')
+        payload, tipo_pacote, numero_pacote = ler_pacote(com3)
+        if tipo_pacote == 'handshake':
+            print('Servidor vivo')
+            print('')
+        else:
+            print('Servidor morto')
+            com3.disable()
+            exit()
+
+        ### FRAGMENTACAO ###
 
 
         

@@ -8,6 +8,8 @@ def cria_head(tipo_pacote, tamanho_payload, numero_pacote, com3):
         head_bytes += [b'\x00']
     elif tipo_pacote == "comando":
         head_bytes += [b'\x01']
+    elif tipo_pacote == "handshake":
+        head_bytes += [b'\x02']
     else:
         print('Tipo de pacote não reconhecido')
         print('Encerrando aplicação...')
@@ -33,14 +35,17 @@ def cria_head(tipo_pacote, tamanho_payload, numero_pacote, com3):
 ### COMEÇO LER HEAD ###
 def ler_head(com3):
     # Tipo do pacote
-    tipo_payload = com3.getData(1)
-    tipo_payload = int.from_bytes(tipo_payload[0], byteorder="big")
-    if tipo_payload == 0:
-        tipo_payload = "dados"
+    tipo_pacote = com3.getData(1)
+    tipo_pacote = int.from_bytes(tipo_pacote[0], byteorder="big")
+    if tipo_pacote == 0:
+        tipo_pacote = "dados"
         print('Pacote de dados recebido')
-    elif tipo_payload == 1:
-        tipo_payload = "comando"
+    elif tipo_pacote == 1:
+        tipo_pacote = "comando"
         print('Pacote de comando recebido')
+    elif tipo_pacote == 2:
+        tipo_pacote = "handshake"
+        print('Pacote de handshake recebido')
     else:
         print('Tipo de pacote não reconhecido')
         print('Encerrando aplicação...')
@@ -50,7 +55,6 @@ def ler_head(com3):
     # Tamanho do pacote
     tamanho_pacote = com3.getData(1)
     tamanho_pacote = int.from_bytes(tamanho_pacote[0], byteorder="big")
-    print('Tamanho do pacote: {}' .format(tamanho_pacote))
 
     # Número do pacote
     numero_pacote = com3.getData(1)
@@ -59,12 +63,12 @@ def ler_head(com3):
     # Apaga o resto do head
     com3.getData(9)
     print('')
-    print('Tipo do pacote: {}' .format(tipo_payload))
+    print('Tipo do pacote: {}' .format(tipo_pacote))
     print('Tamanho do payload: {}' .format(tamanho_pacote))
     print('Número do pacote: {}' .format(numero_pacote))
     print('')
 
-    return tamanho_pacote, numero_pacote
+    return tipo_pacote, tamanho_pacote, numero_pacote
 ### FIM LER HEAD ###
 
 ### COMEÇO CRIA END ###
@@ -102,11 +106,11 @@ def cria_pacote(tipo_pacote, tamanho_payload, numero_pacote, payload, com3):
 ### COMEÇO LER PACOTE ###
 def ler_pacote(com3):
     # Lê o head
-    tamanho_pacote, numero_pacote = ler_head(com3)
+    tipo_pacote, tamanho_pacote, numero_pacote = ler_head(com3)
     tamanho_payload = tamanho_pacote - 15
 
     # Lê o payload
-    payload = com3.getData(tamanho_pacote)
+    payload = com3.getData(tamanho_payload)
 
     # Lê o end
     end = com3.getData(3)
@@ -121,4 +125,5 @@ def ler_pacote(com3):
         print('Pacote recebido com sucesso')
         print('')
     
-    return payload
+    return payload, tipo_pacote, numero_pacote
+### FIM LER PACOTE ###

@@ -15,9 +15,6 @@ from Complementar import *
 #   para saber a sua porta, execute no terminal :
 #   python -m serial.tools.list_ports
 # se estiver usando windows, o gerenciador de dispositivos informa a porta
-#use uma das 3 opcoes para atribuir à variável a porta usada
-#serialName = "/dev/ttyACM0"           # Ubuntu (variacao de)
-#serialName = "/dev/tty.usbmodem1411" # Mac    (variacao de)
 serialName = "COM3"                  # Windows(variacao de)
 
 
@@ -39,9 +36,21 @@ def main():
         print('')
 
         #############################################   
+        payload, tipo_pacote, numero_pacote = ler_pacote(com3)
+        print('Handshake realizado com sucesso')
+        print('')
+        if tipo_pacote == 'handshake':
+            print('Handshake realizado com sucesso')
+            print('')
+        else:
+            print('Handshake não realizado com sucesso')
+            com3.disable()
+            exit()
 
+        volta_handshake = cria_pacote('handshake', 0, 0, payload, com3)
+        com3.sendData(np.asarray(volta_handshake))
         
-
+        ### FRAGMENTACAO ###
 
 
 
