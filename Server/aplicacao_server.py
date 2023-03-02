@@ -24,8 +24,6 @@ serialName = "COM3"                  # Windows(variacao de)
 def main():
     try:
         print("Iniciou o main")
-        #declaramos um objeto do tipo enlace com o nome "com". Essa é a camada inferior à aplicação. Observe que um parametro
-        #para declarar esse objeto é o nome da porta.
         com3 = enlace(serialName)
         # Ativa comunicacao. Inicia os threads e a comunicação seiral 
         com3.enable()
@@ -37,84 +35,17 @@ def main():
         time.sleep(1)
         #### Resolvendo Bug ####
 
-        #Se chegamos até aqui, a comunicação foi aberta com sucesso. Faça um print para informar.
         print("Abriu a comunicação")
-        
+        print('')
 
         #############################################   
-        #aqui você deverá gerar os dados a serem transmitidos. 
-        #seus dados a serem transmitidos são um array bytes a serem transmitidos. Gere esta lista com o 
-        #nome de txBuffer. Esla sempre irá armazenar os dados a serem enviados.
+
         
 
 
-        contador = 0
 
-        while True:
-            txBuffer = com3.getData(1)                      #pega o tamanho do comando
-            if int.from_bytes(txBuffer[0], byteorder="big") == 204:
-                break
-            
-            inteiro = int.from_bytes(txBuffer[0], byteorder="big")
-            txBuffer = com3.getData(inteiro)       #pega o comando (verificar se esta pegando o tamanho do comando)
-            contador += 1                                   #contador de comandos
-
-        #### CASO 2 ####
-        #contador += 1
-        ################
-
-        print('')
-        print('contador de comandos: {}' .format(contador))
-        print('')
-
-
-        txBuffer = contador.to_bytes(1, byteorder='big')    #transforma o contador em bytes
-        
-        ###############################################
-        #### COMENTAR ABAIXO PARA ERRO DE TIME OUT ####
-        com3.sendData(np.asarray(txBuffer))  #as array apenas como boa pratica para casos de ter uma outra forma de dados
-        ###############################################
-        print('enviou o contador de comandos')
 
         #############################################
-
-        #txBuffer = imagem em bytes!
-        #txBuffer = b'\x12\x13\xAA'  #isso é um array de bytes
-        #faça aqui uma conferência do tamanho do seu txBuffer, ou seja, quantos bytes serão enviados.
-       
-            
-        #finalmente vamos transmitir os todos. Para isso usamos a funçao sendData que é um método da camada enlace.
-        #faça um print para avisar que a transmissão vai começar.
-        #tente entender como o método send funciona!
-        #Cuidado! Apenas trasmita arrays de bytes!
-               
-        
-          
-        # A camada enlace possui uma camada inferior, TX possui um método para conhecermos o status da transmissão
-        # O método não deve estar fincionando quando usado como abaixo. deve estar retornando zero. Tente entender como esse método funciona e faça-o funcionar.
-        
-        ###### talvez mudar
-        # txSize = com3.tx.getStatus()
-        # print('enviou = {}' .format(txSize))
-        ######
-
-        #Agora vamos iniciar a recepção dos dados. Se algo chegou ao RX, deve estar automaticamente guardado
-        #Observe o que faz a rotina dentro do thread RX
-        #print um aviso de que a recepção vai começar.
-        
-        #Será que todos os bytes enviados estão realmente guardadas? Será que conseguimos verificar?
-        #Veja o que faz a funcao do enlaceRX  getBufferLen
-      
-        #acesso aos bytes recebidos
-        # txLen = len(txBuffer)
-        # rxBuffer, nRx = com3.getData(txLen)
-        # print("recebeu {} bytes" .format(len(rxBuffer)))
-        
-        # for i in range(len(rxBuffer)):
-        #     print("recebeu {}" .format(rxBuffer[i]))
-        
-
-            
     
         # Encerra comunicação
         print("-------------------------")

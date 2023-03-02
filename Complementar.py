@@ -84,6 +84,21 @@ def cria_payload(payload):
     return payload_bytes
 ### FIM CRIA PAYLOAD ###
 
+## COMEÇO CRIA PACOTE ###
+def cria_pacote(tipo_pacote, tamanho_payload, numero_pacote, payload, com3):
+    # Cria o head
+    head = cria_head(tipo_pacote, tamanho_payload, numero_pacote, com3)
+
+    # Cria o payload
+    payload = cria_payload(payload)
+
+    # Cria o end
+    end = cria_end()
+
+    # Junta tudo
+    pacote = head + payload + end
+    return pacote
+
 ### COMEÇO LER PACOTE ###
 def ler_pacote(com3):
     # Lê o head
