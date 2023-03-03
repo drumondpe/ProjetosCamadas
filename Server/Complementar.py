@@ -123,11 +123,11 @@ def ler_pacote(com3):
     payload = com3.getData(tamanho_payload)
 
     # Lê o end
-    end = com3.getData(3)
+    print('chegou aqui')
+    end = com3.getData(3)[0]
     print('End: {}' .format(int.from_bytes(end, byteorder='big')))
     comparacao = [b'\xFF', b'\xFF', b'\xFF']
-    print('Comparação: {}' .format(int.from_bytes(comparacao, byteorder='big')))
-    if int.from_bytes(end, byteorder='big') != int.from_bytes(comparacao, byteorder='big'):
+    if int.from_bytes(end, byteorder='big') != 16777215:
         print('')
         print('Erro no pacote recebido')
         print('Encerrando aplicação...')
