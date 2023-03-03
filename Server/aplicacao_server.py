@@ -9,7 +9,7 @@ from enlace import *
 import time
 import numpy as np
 import random 
-from Complementar import *
+from Client.Complementar import *
 
 # voce deverá descomentar e configurar a porta com através da qual ira fazer comunicaçao
 #   para saber a sua porta, execute no terminal :
