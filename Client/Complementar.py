@@ -1,3 +1,4 @@
+import numpy as np
 ### COMEÇO CRIAR HEAD ###
 # HEAD DEVE TER 12 BYTES #
 def cria_head(tipo_pacote, tamanho_payload, numero_pacote, total_pacotes, com3):
@@ -71,7 +72,7 @@ def ler_head(com3):
     com3.getData(8)
     print('')
     print('Tipo do pacote: {}' .format(tipo_pacote))
-    print('Tamanho do payload: {}' .format(tamanho_pacote))
+    print('Tamanho do pacote: {}' .format(tamanho_pacote))
     print('Número do pacote: {}' .format(numero_pacote))
     print('')
 
@@ -122,7 +123,7 @@ def ler_pacote(com3):
 
     # Lê o end
     end = com3.getData(3)
-    if end != [b'\xFF', b'\xFF', b'\xFF']:
+    if end != np.bytearray([b'\xFF', b'\xFF', b'\xFF']):
         print('')
         print('Erro no pacote recebido')
         print('Encerrando aplicação...')
