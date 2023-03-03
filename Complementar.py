@@ -124,7 +124,9 @@ def ler_pacote(com3):
 
     # Lê o end
     end = com3.getData(3)
+    print('End: {}' .format(end))
     comparacao = [b'\xFF', b'\xFF', b'\xFF']
+    print('Comparação: {}' .format(np.asarray(comparacao)))
     if end != np.asarray(comparacao):
         print('')
         print('Erro no pacote recebido')
