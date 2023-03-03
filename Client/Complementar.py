@@ -154,8 +154,10 @@ def cria_pacote2(tipo_pacote, tamanho_payload, numero_pacote, total_pacotes, pay
     # Cria o end
     end = cria_end()
 
+    
+
     # Junta tudo
-    pacote = np.asarray(head) + payload + np.asarray(end)
+    pacote = bytearray(head) + payload + bytearray(end)
     return pacote
 
 ### COMEÇO FAZ FRANGMENTAÇÃO ###
