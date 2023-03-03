@@ -64,7 +64,7 @@ def main():
                 handshake = False
 
         ##### Servidor vivo #####
-        payload, tipo_pacote, numero_pacote = ler_pacote(com3)
+        payload, tipo_pacote, numero_pacote, total_pacotes = ler_pacote(com3)
         if tipo_pacote == 'handshake':
             print('Servidor vivo')
             print('')
@@ -74,7 +74,7 @@ def main():
             exit()
 
         ### FRAGMENTACAO ###
-        sorriso = 'sorriso.jpg'
+        sorriso = 'sorriso.png'
         with open(sorriso, 'rb') as f:
             img = f.read()
         img = bytearray(img)
