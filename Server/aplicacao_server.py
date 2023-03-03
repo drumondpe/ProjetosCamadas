@@ -9,8 +9,6 @@ from enlace import *
 import time
 import numpy as np
 import random 
-import sys
-sys.path.insert(1, './ProjetosCamadas')
 from Complementar import *
 
 # voce deverá descomentar e configurar a porta com através da qual ira fazer comunicaçao
