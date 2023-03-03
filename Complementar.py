@@ -125,7 +125,7 @@ def ler_pacote(com3):
     # Lê o end
     end = com3.getData(3)
     comparacao = [b'\xFF', b'\xFF', b'\xFF']
-    if end != np.bytearray(comparacao):
+    if end != np.asarray(comparacao):
         print('')
         print('Erro no pacote recebido')
         print('Encerrando aplicação...')
