@@ -127,7 +127,7 @@ def ler_pacote(com3):
     print('End: {}' .format(end))
     comparacao = [b'\xFF', b'\xFF', b'\xFF']
     print('Comparação: {}' .format(np.asarray(comparacao)))
-    if int.from_bytes(end) != int.from_bytes(comparacao):
+    if int.from_bytes(end, byteorder='big') != int.from_bytes(comparacao, byteorder='big'):
         print('')
         print('Erro no pacote recebido')
         print('Encerrando aplicação...')
