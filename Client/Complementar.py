@@ -28,6 +28,7 @@ def cria_head(tipo_pacote, tamanho_payload, numero_pacote, total_pacotes, com3):
 
     # Total de pacotes
     total_pacotes = total_pacotes.to_bytes(1, byteorder="big")
+    head_bytes += [total_pacotes]
     
     # Completa o head com zeros
     for i in range(8):
