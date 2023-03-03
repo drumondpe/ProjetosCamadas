@@ -126,6 +126,7 @@ def ler_pacote(com3):
     end = com3.getData(3)
     print('End: {}' .format(end))
     comparacao = [b'\xFF', b'\xFF', b'\xFF']
+    bytearray(comparacao)
     print('Comparação: {}' .format(np.asarray(comparacao)))
     if int.from_bytes(end, byteorder='big') != int.from_bytes(comparacao, byteorder='big'):
         print('')
