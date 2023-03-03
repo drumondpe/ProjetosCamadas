@@ -38,8 +38,6 @@ def main():
 
         #############################################   
         payload, tipo_pacote, numero_pacote, total_pacotes = ler_pacote(com3)
-        print('Handshake realizado com sucesso')
-        print('')
         if tipo_pacote == 'handshake':
             print('Handshake realizado com sucesso')
             print('')

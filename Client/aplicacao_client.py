@@ -36,11 +36,11 @@ def main():
 
         #############################################   
         # Handshake
-        # cria_pacote(tipo_pacote, tamanho_payload, numero_pacote, payload, com3)
+        # cria_pacote(tipo_pacote, tamanho_payload, numero_pacote, total_pacotes, payload, com3)
         handshake = True
         while handshake:
-            pergunta = []
-            txBuffer = cria_pacote('handshake', 0, 0, 1, pergunta, com3)
+            pergunta = [b'\x01']
+            txBuffer = cria_pacote('handshake', 1, 0, 1, pergunta, com3)
 
             # Envia a pergunta
             print('Enviando pergunta...')
