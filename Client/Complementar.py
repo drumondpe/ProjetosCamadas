@@ -107,7 +107,10 @@ def cria_pacote(tipo_pacote, tamanho_payload, numero_pacote, total_pacotes, payl
 
     # Cria o end
     end = cria_end()
-
+    
+    print(head)
+    print('')
+    print(end)
     # Junta tudo
     pacote = head + payload + end
     return pacote
@@ -141,32 +144,48 @@ def ler_pacote(com3):
     return payload, tipo_pacote, numero_pacote, total_pacotes
 ### FIM LER PACOTE ###
 
+def cria_pacote2(tipo_pacote, tamanho_payload, numero_pacote, total_pacotes, payload, com3):
+    # Cria o head
+    head = cria_head(tipo_pacote, tamanho_payload, numero_pacote, total_pacotes, com3)
+
+    # Cria o payload
+    # payload = cria_payload(payload)
+
+    # Cria o end
+    end = cria_end()
+
+    # Junta tudo
+    pacote = np.asarray(head) + payload + np.asarray(end)
+    return pacote
+
 ### COMEÇO FAZ FRANGMENTAÇÃO ###
 def faz_fragmentacao(payload_total, com3):
     tamanho_payload = len(payload_total)
     pacotes_totais = tamanho_payload // 50
     if tamanho_payload % 50 != 0:
         pacotes_totais += 1
-    
+    print('aqui 0')
     numero_pacote = 0
     pacotes = []
     cinquentas = 0
     total_pacotes = 0
-
+    print('aqui 1')
     for i in range(tamanho_payload):
-        if i % 50 == 0:
-            pacote = cria_pacote("dados", 50, numero_pacote, payload_total[i:i+50], pacotes_totais, com3)
+        if i % 50 == 0 and i != 0:
+            pacote = cria_pacote2("dados", 50, numero_pacote, pacotes_totais, payload_total[i:i+50], com3)
+            print('antes')
             pacotes.append(pacote)
+            print('depois')
             numero_pacote += 1
             cinquentas += 1
             total_pacotes += 1
-
+    print('aqui 2')
     if tamanho_payload % 50 != 0:
         faltando = cinquentas * 50
-        pacote = cria_pacote("dados", tamanho_payload % 50, numero_pacote, payload_total[faltando+1:], pacotes_totais, com3)
+        pacote = cria_pacote2("dados", tamanho_payload % 50, numero_pacote, pacotes_totais, payload_total[faltando+1:], com3)
         pacotes.append(pacote)
         total_pacotes += 1
-
+    print('aqui 3')
 
     return pacotes, total_pacotes
 ### FIM FAZ FRANGMENTAÇÃO ###
