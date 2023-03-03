@@ -103,7 +103,7 @@ def cria_pacote(tipo_pacote, tamanho_payload, numero_pacote, total_pacotes, payl
     head = cria_head(tipo_pacote, tamanho_payload, numero_pacote, total_pacotes, com3)
 
     # Cria o payload
-    payload = cria_payload(payload)
+    # payload = cria_payload(payload)
 
     # Cria o end
     end = cria_end()
