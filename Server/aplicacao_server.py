@@ -46,7 +46,8 @@ def main():
             com3.disable()
             exit()
 
-        volta_handshake = cria_pacote('handshake', 0, 0, payload, com3)
+        pergunta = [b'\x01']
+        volta_handshake = cria_pacote('handshake', 1, 0, 1, pergunta, com3)
         com3.sendData(np.asarray(volta_handshake))
         time.sleep(1)
 

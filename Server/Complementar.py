@@ -144,6 +144,10 @@ def ler_pacote(com3):
 ### COMEÇO FAZ FRANGMENTAÇÃO ###
 def faz_fragmentacao(payload_total, com3):
     tamanho_payload = len(payload_total)
+    pacotes_totais = tamanho_payload // 50
+    if tamanho_payload % 50 != 0:
+        pacotes_totais += 1
+    
     numero_pacote = 0
     pacotes = []
     cinquentas = 0
@@ -151,7 +155,7 @@ def faz_fragmentacao(payload_total, com3):
 
     for i in range(tamanho_payload):
         if i % 50 == 0:
-            pacote = cria_pacote("dados", 50, numero_pacote, payload_total[i:i+50], com3)
+            pacote = cria_pacote("dados", 50, numero_pacote, payload_total[i:i+50], pacotes_totais, com3)
             pacotes.append(pacote)
             numero_pacote += 1
             cinquentas += 1
@@ -159,7 +163,7 @@ def faz_fragmentacao(payload_total, com3):
 
     if tamanho_payload % 50 != 0:
         faltando = cinquentas * 50
-        pacote = cria_pacote("dados", tamanho_payload % 50, numero_pacote, payload_total[faltando+1:], com3)
+        pacote = cria_pacote("dados", tamanho_payload % 50, numero_pacote, payload_total[faltando+1:], pacotes_totais, com3)
         pacotes.append(pacote)
         total_pacotes += 1
 
