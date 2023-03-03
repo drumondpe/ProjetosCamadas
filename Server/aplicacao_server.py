@@ -26,6 +26,7 @@ def main():
         com3.enable()
 
         #### Resolvendo Bug ####
+        
         print('esperando 1 byte de sacrificio')
         rxBuffer, nRx = com3.getData(1)
         com3.rx.clearBuffer()
@@ -36,7 +37,7 @@ def main():
         print('')
 
         #############################################   
-        payload, tipo_pacote, numero_pacote = ler_pacote(com3)
+        payload, tipo_pacote, numero_pacote, total_pacotes = ler_pacote(com3)
         print('Handshake realizado com sucesso')
         print('')
         if tipo_pacote == 'handshake':
