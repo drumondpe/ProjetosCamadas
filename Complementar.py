@@ -1,6 +1,6 @@
 ### COMEÇO CRIAR HEAD ###
 # HEAD DEVE TER 12 BYTES #
-def cria_head(tipo_pacote, tamanho_payload, numero_pacote, com3):
+def cria_head(tipo_pacote, tamanho_payload, numero_pacote, total_pacotes, com3):
     head_bytes = []
     
     # Tipo do pacote
@@ -24,9 +24,12 @@ def cria_head(tipo_pacote, tamanho_payload, numero_pacote, com3):
     # Numero do pacote
     numero_pacote = numero_pacote.to_bytes(1, byteorder="big")
     head_bytes += [numero_pacote]
+
+    # Total de pacotes
+    total_pacotes = total_pacotes.to_bytes(1, byteorder="big")
     
     # Completa o head com zeros
-    for i in range(9):
+    for i in range(8):
         head_bytes += [b'\x00']
     
     return head_bytes
@@ -60,15 +63,19 @@ def ler_head(com3):
     numero_pacote = com3.getData(1)
     numero_pacote = int.from_bytes(numero_pacote[0], byteorder="big")
 
+    # Total de pacotes
+    total_pacotes = com3.getData(1)
+    total_pacotes = int.from_bytes(total_pacotes[0], byteorder="big")
+
     # Apaga o resto do head
-    com3.getData(9)
+    com3.getData(8)
     print('')
     print('Tipo do pacote: {}' .format(tipo_pacote))
     print('Tamanho do payload: {}' .format(tamanho_pacote))
     print('Número do pacote: {}' .format(numero_pacote))
     print('')
 
-    return tipo_pacote, tamanho_pacote, numero_pacote
+    return tipo_pacote, tamanho_pacote, numero_pacote, total_pacotes
 ### FIM LER HEAD ###
 
 ### COMEÇO CRIA END ###
@@ -89,9 +96,9 @@ def cria_payload(payload):
 ### FIM CRIA PAYLOAD ###
 
 ## COMEÇO CRIA PACOTE ###
-def cria_pacote(tipo_pacote, tamanho_payload, numero_pacote, payload, com3):
+def cria_pacote(tipo_pacote, tamanho_payload, numero_pacote, total_pacotes, payload, com3):
     # Cria o head
-    head = cria_head(tipo_pacote, tamanho_payload, numero_pacote, com3)
+    head = cria_head(tipo_pacote, tamanho_payload, numero_pacote, total_pacotes, com3)
 
     # Cria o payload
     payload = cria_payload(payload)
@@ -102,11 +109,12 @@ def cria_pacote(tipo_pacote, tamanho_payload, numero_pacote, payload, com3):
     # Junta tudo
     pacote = head + payload + end
     return pacote
+### FIM CRIA PACOTE ###
 
 ### COMEÇO LER PACOTE ###
 def ler_pacote(com3):
     # Lê o head
-    tipo_pacote, tamanho_pacote, numero_pacote = ler_head(com3)
+    tipo_pacote, tamanho_pacote, numero_pacote, total_pacotes = ler_head(com3)
     tamanho_payload = tamanho_pacote - 15
 
     # Lê o payload
@@ -125,5 +133,31 @@ def ler_pacote(com3):
         print('Pacote recebido com sucesso')
         print('')
     
-    return payload, tipo_pacote, numero_pacote
+    return payload, tipo_pacote, numero_pacote, total_pacotes
 ### FIM LER PACOTE ###
+
+### COMEÇO FAZ FRANGMENTAÇÃO ###
+def faz_fragmentacao(payload_total, com3):
+    tamanho_payload = len(payload_total)
+    numero_pacote = 0
+    pacotes = []
+    cinquentas = 0
+    total_pacotes = 0
+
+    for i in range(tamanho_payload):
+        if i % 50 == 0:
+            pacote = cria_pacote("dados", 50, numero_pacote, payload_total[i:i+50], com3)
+            pacotes.append(pacote)
+            numero_pacote += 1
+            cinquentas += 1
+            total_pacotes += 1
+
+    if tamanho_payload % 50 != 0:
+        faltando = cinquentas * 50
+        pacote = cria_pacote("dados", tamanho_payload % 50, numero_pacote, payload_total[faltando+1:], com3)
+        pacotes.append(pacote)
+        total_pacotes += 1
+
+
+    return pacotes, total_pacotes
+### FIM FAZ FRANGMENTAÇÃO ###

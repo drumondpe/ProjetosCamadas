@@ -74,15 +74,40 @@ def main():
             exit()
 
         ### FRAGMENTACAO ###
+        sorriso = 'sorriso.jpg'
+        with open(sorriso, 'rb') as f:
+            img = f.read()
+        img = bytearray(img)
+        tamanho_img = len(img)
+        print('Frangmentando imagem...')
+        print('')
 
-
+        lista_pacotes, total_pacotes = faz_fragmentacao(img, com3)
+        print('Fragmentação concluída')
+        print('')
         
+        ### Enviando pacotes ###
+        print('Enviando pacotes...')
+        print('')
 
-                        
-                
+        i = 0
+        while i < len(lista_pacotes):
+            com3.sendData(np.asarray(lista_pacotes[i]))
+            print('Pacote {} enviado'.format(i))
+            print('')
+            i += 1
 
+            payload, tipo_pacote, numero_pacote = ler_pacote(com3)
+            if int.from_bytes(payload, byteorder='big') == 1:
+                print('Erro ao receber pacote')
+                print('')
+                i -= 1 # faz o loop voltar para o pacote que deu erro e envia de novo  
         
-        
+        ### RECEBENDO CONFIRMACAO DE TERMINO ###
+        payload, tipo_pacote, numero_pacote, total_pacotes = ler_pacote(com3)
+        if int.from_bytes(payload) == 0:
+            print('Imagem enviada com sucesso')
+            print('')
 
         #############################################  
     
