@@ -34,7 +34,7 @@ def main():
         while handshake:
             # Head = [tipo, tamanho, numero, total]
             head = [b'\x00', b'\x0f', b'\x00', b'\x01']
-            head += [b'\x00'] * (12 - len(head))
+            head += [b'\x00', b'\x00', b'\x00', b'\x00', b'\x00', b'\x00', b'\x00', b'\x00']
             com3.sendData(np.asarray(head))
             print('Enviou o head')
 
