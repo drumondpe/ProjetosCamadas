@@ -165,8 +165,9 @@ def main():
                         break
 
             com3.getData(12)
-            check = com3.getData(1)[0]
-            if check == b'\x00':
+            check = int.from_bytes(com3.getData(1)[0], byteorder='big')
+            print(check)
+            if check == 0:
                 print('Pacote {} recebido com sucesso'.format(i+1))
             else:
                 print('Pacote {} recebido com ERRO'.format(i+1))
