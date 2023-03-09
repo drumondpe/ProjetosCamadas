@@ -27,21 +27,21 @@ def main():
         print("")
 
         #############################################   
-        ### Handshake ###
+        ### HANDSHAKE ###
         print("Iniciando Handshake")
 
         handshake = True
         while handshake:
+            txBuffer = []
             # Head = [tipo, tamanho, numero, total]
             head = [b'\x00', b'\x0f', b'\x00', b'\x01']
             head += [b'\x00', b'\x00', b'\x00', b'\x00', b'\x00', b'\x00', b'\x00', b'\x00']
-            com3.sendData(np.asarray(head))
-            print('Enviou o head')
+            txBuffer += head
 
             #End of Package
             eop = [b'\xff', b'\xff', b'\xff']
-            com3.sendData(np.asarray(eop))
-            print('Enviou o eop')
+            txBuffer += eop
+            com3.sendData(np.asarray(txBuffer))
 
             print('Esperando resposta do server...')
             time_start = time.time()
@@ -76,9 +76,18 @@ def main():
         com3.getData(tamanho_pacote - 2)
         print('Handshake recebido com sucesso')
         print('')
-        ### Handshake ###
+        ### HANDSHAKE ###
 
-        
+        ### FRANGMENTAÇÃO ###
+        # print('Iniciando fragmentação')
+        # print('')
+        # sorriso = 'sorriso.png'
+        # with open(sorriso, 'rb') as f:
+        #     img = f.read()
+        # img = bytearray(img)
+        # tamanho_img = len(img)
+        # print('Tamanho da imagem: {}'.format(tamanho_img))
+
 
         #############################################  
     

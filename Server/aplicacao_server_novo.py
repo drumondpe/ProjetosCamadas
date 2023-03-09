@@ -29,7 +29,7 @@ def main():
         print('')
 
         #############################################   
-        ### Handshake ###
+        ### HANDSHAKE ###
         # Tipo de pacote
         tipo_pacote = com3.getData(1)[0]
         if tipo_pacote == b'\x00':
@@ -49,17 +49,22 @@ def main():
 
         ## Respondendo Handshake ##
         print('Respondendo Handshake')
+        txBuffer = []
         # Head = [tipo, tamanho, numero, total]
         head = [b'\x00', b'\x0f', b'\x00', b'\x01']
         head += [b'\x00', b'\x00', b'\x00', b'\x00', b'\x00', b'\x00', b'\x00', b'\x00']
-        com3.sendData(np.asarray(head))
-        print('Enviou o head')
+        txBuffer += head
 
         #End of Package
         eop = [b'\xff', b'\xff', b'\xff']
-        com3.sendData(np.asarray(eop))
-        print('Enviou o eop')
+        txBuffer += eop
+        com3.sendData(np.asarray(txBuffer))
+        print('Handshake enviado com sucesso')
         print('')
+        ### HANDSHAKE ###
+
+        ### RECEBENDO PACOTES ###
+
 
         #############################################
     
