@@ -59,7 +59,26 @@ def main():
             if com3.rx.getIsEmpty() == False:
                 handshake = False
 
+        ## Recebendo resposta do server ##
+        print('Recebendo resposta do server...')
+        tipo_pacote = com3.getData(1)[0]
+        if tipo_pacote == b'\x00':
+            print('Handshake realizado com sucesso')
+            print('')
+        else:
+            print('Handshake não realizado com sucesso')
+            com3.disable()
+            exit()
+        
+        tamanho_pacote = com3.getData(1)[0]
+        tamanho_pacote = int.from_bytes(tamanho_pacote, byteorder='big')
+        print('Tamanho do pacote: {}'.format(tamanho_pacote))
+        com3.getData(tamanho_pacote - 2)
+        print('Handshake recebido com sucesso')
+        print('')
+        ### Handshake ###
 
+        
 
         #############################################  
     

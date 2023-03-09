@@ -32,7 +32,7 @@ def main():
         ### Handshake ###
         # Tipo de pacote
         tipo_pacote = com3.getData(1)[0]
-        if tipo_pacote == b'\x01':
+        if tipo_pacote == b'\x00':
             print('Handshake realizado com sucesso')
             print('')
         else:
@@ -49,8 +49,17 @@ def main():
 
         ## Respondendo Handshake ##
         print('Respondendo Handshake')
-        
+        # Head = [tipo, tamanho, numero, total]
+        head = [b'\x00', b'\x0f', b'\x00', b'\x01']
+        head += [b'\x00'] * (12 - len(head))
+        com3.sendData(np.asarray(head))
+        print('Enviou o head')
 
+        #End of Package
+        eop = [b'\xff', b'\xff', b'\xff']
+        com3.sendData(np.asarray(eop))
+        print('Enviou o eop')
+        print('')
 
         #############################################
     
