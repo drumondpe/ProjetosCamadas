@@ -151,7 +151,27 @@ def main():
             com3.sendData(np.asarray(pacotes[i]))
             print('Pacote {} enviado'.format(i+1))
 
-            
+            time_start = time.time()
+            while com3.rx.getIsEmpty() == True:
+                if time.time() - time_start > 5:
+                    print('Tempo de resposta excedido')
+                    tentar_novamente = input('Deseja tentar novamente? (s/n)')
+                    if tentar_novamente == 'n':
+                        print('Encerrando aplicação...')
+                        com3.disable()
+                        exit()
+                    elif tentar_novamente == 's':
+                        break
+
+            com3.getData(12)
+            check = com3.getData(1)[0]
+            if check == b'\x00':
+                print('Pacote {} recebido com sucesso'.format(i+1))
+            else:
+                print('Pacote {} recebido com ERRO'.format(i+1))
+                com3.disable()
+                exit()
+
 
 
         #############################################  
