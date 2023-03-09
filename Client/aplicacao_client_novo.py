@@ -79,14 +79,79 @@ def main():
         ### HANDSHAKE ###
 
         ### FRANGMENTAÇÃO ###
-        # print('Iniciando fragmentação')
-        # print('')
-        # sorriso = 'sorriso.png'
-        # with open(sorriso, 'rb') as f:
-        #     img = f.read()
-        # img = bytearray(img)
-        # tamanho_img = len(img)
-        # print('Tamanho da imagem: {}'.format(tamanho_img))
+        print('Iniciando fragmentação')
+        print('')
+        sorriso = 'sorriso.png'
+        with open(sorriso, 'rb') as f:
+            img = f.read()
+        img = bytearray(img)
+        tamanho_img = len(img)
+        print('Tamanho da imagem: {}'.format(tamanho_img))
+
+        # Definindo tamanho do pacote
+        pacotes_totais = tamanho_img // 50
+        if tamanho_img % 50 != 0:
+            pacotes_totais += 1
+        print('Total de pacotes: {}'.format(pacotes_totais)) 
+
+        numero_pacote = 1
+        pacotes = []
+        cinquentas = 0
+        total_pacotes = 0
+        i=0
+        for i in range(tamanho_img):
+            if i % 50 == 0 or i == 0:
+                txBuffer = []
+                # Head = [tipo, tamanho, numero, total]
+                head = [b'\x01', b'\x41', numero_pacote.to_bytes(2, byteorder='big'), pacotes_totais.to_bytes(2, byteorder='big')]
+                head += [b'\x00', b'\x00', b'\x00', b'\x00', b'\x00', b'\x00', b'\x00', b'\x00']
+                txBuffer += head
+
+                # Payload
+                payload = img[i:i+50]
+                txBuffer += payload
+
+                #End of Package
+                eop = [b'\xff', b'\xff', b'\xff']
+                txBuffer += eop
+
+                pacotes += [txBuffer]
+                print('Pacote {} criado'.format(numero_pacote))
+                numero_pacote += 1
+                cinquentas += 1
+                total_pacotes += 1
+                i += 50
+
+            elif tamanho_img - i % 50 < 50:
+                txBuffer = []
+                faltando = cinquentas * 50
+                # Head = [tipo, tamanho, numero, total]
+                head = [b'\x01', b'\x41', numero_pacote.to_bytes(2, byteorder='big'), pacotes_totais.to_bytes(2, byteorder='big')]
+                head += [b'\x00', b'\x00', b'\x00', b'\x00', b'\x00', b'\x00', b'\x00', b'\x00']
+                txBuffer += head
+
+                # Payload
+                payload = img[faltando:]
+                txBuffer += payload
+
+                #End of Package
+                eop = [b'\xff', b'\xff', b'\xff']
+                txBuffer += eop
+
+                pacotes += [txBuffer]
+                # print('Pacote {} criado'.format(numero_pacote))
+        
+        print('Fragmentação concluída')
+        print('Pacotes criados com sucesso')
+        print('')
+        ### FRANGMENTAÇÃO ###
+
+        ### ENVIO DOS PACOTES ###
+        for i in range(pacotes):
+            com3.sendData(np.asarray(pacotes[i]))
+            print('Pacote {} enviado'.format(i+1))
+
+            
 
 
         #############################################  
