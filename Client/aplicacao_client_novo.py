@@ -101,18 +101,19 @@ def main():
         i=0
         for i in range(tamanho_img):
             if i % 50 == 0 or i == 0:
-                txBuffer = []
+                
                 # Head = [tipo, tamanho, numero, total]
-                head = [b'\x01', b'\x41', numero_pacote.to_bytes(2, byteorder='big'), pacotes_totais.to_bytes(2, byteorder='big')]
-                head += [b'\x00', b'\x00', b'\x00', b'\x00', b'\x00', b'\x00', b'\x00', b'\x00']
-                txBuffer += head
+                head = bytearray([1, 65])
+                head += bytearray([numero_pacote, pacotes_totais])
+                head += bytearray([0,0,0,0,0,0,0,0])
+                txBuffer = bytearray(head)
 
                 # Payload
                 payload = img[i:i+50]
                 txBuffer += payload
 
                 #End of Package
-                eop = [b'\xff', b'\xff', b'\xff']
+                eop = bytearray([255,255,255])
                 txBuffer += eop
 
                 pacotes += [txBuffer]
@@ -123,19 +124,19 @@ def main():
                 i += 50
 
             elif tamanho_img - i % 50 < 50:
-                txBuffer = []
                 faltando = cinquentas * 50
                 # Head = [tipo, tamanho, numero, total]
-                head = [b'\x01', b'\x41', numero_pacote.to_bytes(2, byteorder='big'), pacotes_totais.to_bytes(2, byteorder='big')]
-                head += [b'\x00', b'\x00', b'\x00', b'\x00', b'\x00', b'\x00', b'\x00', b'\x00']
-                txBuffer += head
+                head = bytearray([1, 65])
+                head += bytearray([numero_pacote, pacotes_totais])
+                head += bytearray([0,0,0,0,0,0,0,0])
+                txBuffer = bytearray(head)
 
                 # Payload
                 payload = img[faltando:]
                 txBuffer += payload
 
                 #End of Package
-                eop = [b'\xff', b'\xff', b'\xff']
+                eop = bytearray([255,255,255])
                 txBuffer += eop
 
                 pacotes += [txBuffer]
@@ -147,7 +148,7 @@ def main():
         ### FRANGMENTAÇÃO ###
 
         ### ENVIO DOS PACOTES ###
-        for i in range(pacotes):
+        for i in range(len(pacotes)):
             com3.sendData(np.asarray(pacotes[i]))
             print('Pacote {} enviado'.format(i+1))
 
