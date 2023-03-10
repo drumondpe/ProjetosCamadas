@@ -97,11 +97,9 @@ def main():
         numero_pacote = 1
         pacotes = []
         cinquentas = 0
-        total_pacotes = 0
         i=0
-        for i in range(tamanho_img):
-            if i % 50 == 0 or i == 0:
-                
+        while i < tamanho_img:
+            if i % 50 == 0 and i < 1300:
                 # Head = [tipo, tamanho, numero, total]
                 head = bytearray([1, 65])
                 head += bytearray([numero_pacote, pacotes_totais])
@@ -120,19 +118,18 @@ def main():
                 print('Pacote {} criado'.format(numero_pacote))
                 numero_pacote += 1
                 cinquentas += 1
-                total_pacotes += 1
-                i += 50
+                
 
-            elif tamanho_img - i % 50 < 50:
-                faltando = cinquentas * 50
+            elif i % 1300 == 0 and i != 0:
+                faltando = tamanho_img - i
                 # Head = [tipo, tamanho, numero, total]
-                head = bytearray([1, 65])
+                head = bytearray([1, faltando+15])
                 head += bytearray([numero_pacote, pacotes_totais])
                 head += bytearray([0,0,0,0,0,0,0,0])
                 txBuffer = bytearray(head)
 
                 # Payload
-                payload = img[faltando:]
+                payload = img[i:]
                 txBuffer += payload
 
                 #End of Package
@@ -141,6 +138,9 @@ def main():
 
                 pacotes += [txBuffer]
                 # print('Pacote {} criado'.format(numero_pacote))
+                break
+            
+            i += 1
         
         print('Fragmentação concluída')
         print('Pacotes criados com sucesso')
@@ -149,8 +149,12 @@ def main():
 
         ### ENVIO DOS PACOTES ###
         for i in range(len(pacotes)):
+            print('')
             com3.sendData(np.asarray(pacotes[i]))
+            print(np.asarray(pacotes[i]))
             print('Pacote {} enviado'.format(i+1))
+            print('Tamanho pacote: {}'.format(len(pacotes[i])))
+            time.sleep(1)
 
             time_start = time.time()
             while com3.rx.getIsEmpty() == True:
@@ -166,13 +170,13 @@ def main():
 
             com3.getData(12)
             check = int.from_bytes(com3.getData(1)[0], byteorder='big')
-            print(check)
             if check == 0:
                 print('Pacote {} recebido com sucesso'.format(i+1))
             else:
                 print('Pacote {} recebido com ERRO'.format(i+1))
                 com3.disable()
                 exit()
+            com3.getData(3)
 
 
 
