@@ -33,16 +33,20 @@ def main():
         handshake = True
         while handshake:
             txBuffer = []
-            # Head = [tipo, tamanho, numero, total]
-            head = [b'\x00', b'\x0f', b'\x00', b'\x01']
-            head += [b'\x00', b'\x00', b'\x00', b'\x00', b'\x00', b'\x00', b'\x00', b'\x00']
-            txBuffer += head
+            # Head = [tipo, remetente, livre, total_pacotes, numero_pacote, id_ou_tamanho, pacote_erro, ultimo_pacote][10]
+            head = cria_head('tipo1', 'servidor', 0, 1, 1, 10, 0, 0)
+            txBuffer = head
 
             #End of Package
-            eop = [b'\xff', b'\xff', b'\xff']
+            eop = cria_eop()
             txBuffer += eop
-            com3.sendData(np.asarray(txBuffer))
+            print('Enviando handshake...')
+            print(txBuffer)
+            #com3.sendData(np.asarray(txBuffer))
 
+            com3.disable()
+            exit()
+            ###############################################################
             print('Esperando resposta do server...')
             time_start = time.time()
             while com3.rx.getIsEmpty() == True:
