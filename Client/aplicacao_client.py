@@ -42,10 +42,11 @@ def main():
             txBuffer += eop
             print('Enviando handshake...')
             print(txBuffer)
-            #com3.sendData(np.asarray(txBuffer))
+            com3.sendData(np.asarray(txBuffer))
 
             com3.disable()
             exit()
+            
             ###############################################################
             print('Esperando resposta do server...')
             time_start = time.time()

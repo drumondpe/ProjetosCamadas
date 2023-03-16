@@ -30,15 +30,24 @@ def main():
 
         #############################################   
         ### HANDSHAKE ###
-        # Tipo de pacote
-        tipo_pacote = com3.getData(1)[0]
-        if tipo_pacote == b'\x00':
-            print('Handshake realizado com sucesso')
-            print('')
-        else:
-            print('Handshake não realizado com sucesso')
-            com3.disable()
-            exit()
+        print('Recebendo Handshake')
+        ocioso = True
+        while ocioso:
+            tipo, remetente, livre, total_pacotes, numero_pacote, id, pacote_erro, ultimo_pacote = com3.getData(10)[0]
+            if int.from_bytes(tipo) == 1:
+                if int.from_bytes(remetente) == 1:
+                    ocioso = False
+                    print('Handshake recebido com sucesso')
+                    print('')
+            else:
+                time.sleep(1)
+                print('Handshake não recebido, tentando novamente...')
+                print('')
+        
+
+        com3.disable()
+        exit()
+
         
         tamanho_pacote = com3.getData(1)[0]
         tamanho_pacote = int.from_bytes(tamanho_pacote, byteorder='big')
