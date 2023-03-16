@@ -57,3 +57,16 @@ def cria_payload():
 def cria_eop():
     eop = bytearray([170,187,204,221])
     return eop
+
+### LE HEAD ###
+def le_head(head):
+    tipo = head[0]
+    remetente = head[1]
+    livre = head[2]
+    total_pacotes = head[3]
+    numero_pacote = head[4]
+    id_ou_tamanho = head[5]
+    pacote_erro = head[6]
+    ultimo_pacote = head[7]
+
+    return tipo, remetente, livre, total_pacotes, numero_pacote, id_ou_tamanho, pacote_erro, ultimo_pacote

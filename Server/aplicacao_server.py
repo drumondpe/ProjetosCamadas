@@ -33,7 +33,9 @@ def main():
         print('Recebendo Handshake')
         ocioso = True
         while ocioso:
-            tipo, remetente, livre, total_pacotes, numero_pacote, id, pacote_erro, ultimo_pacote = com3.getData(10)[0]
+            head = com3.getData(10)[0]
+            tipo, remetente, livre, total_pacotes, numero_pacote, id_ou_tamanho, pacote_erro, ultimo_pacote = le_head(head)
+
             if int.from_bytes(tipo) == 1:
                 if int.from_bytes(remetente) == 1:
                     ocioso = False
