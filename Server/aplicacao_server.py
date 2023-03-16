@@ -36,8 +36,8 @@ def main():
             head = com3.getData(10)[0]
             tipo, remetente, livre, total_pacotes, numero_pacote, id_ou_tamanho, pacote_erro, ultimo_pacote = le_head(head)
 
-            if int.from_bytes(tipo) == 1:
-                if int.from_bytes(remetente) == 1:
+            if int.from_bytes(tipo, byteorder='big') == 1:
+                if int.from_bytes(remetente, byteorder='big') == 1:
                     ocioso = False
                     print('Handshake recebido com sucesso')
                     print('')
