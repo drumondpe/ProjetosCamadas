@@ -1,10 +1,3 @@
-#####################################################
-# Camada Física da Computação
-#Carareto
-#11/08/2022
-#Aplicação
-####################################################
-
 from enlace import *
 import time
 import numpy as np
@@ -16,7 +9,6 @@ from Complementar import *
 #   python -m serial.tools.list_ports
 # se estiver usando windows, o gerenciador de dispositivos informa a porta
 serialName = "COM3"                  # Windows(variacao de)
-
 
 def main():
     try:
@@ -35,19 +27,23 @@ def main():
         print("")
 
         #############################################   
-        # Handshake
-        # cria_pacote(tipo_pacote, tamanho_payload, numero_pacote, total_pacotes, payload, com3)
+        ### HANDSHAKE ###
+        print("Iniciando Handshake")
+
         handshake = True
         while handshake:
-            pergunta = [b'\x01']
-            txBuffer = cria_pacote('handshake', 1, 0, 1, pergunta, com3)
+            txBuffer = []
+            # Head = [tipo, tamanho, numero, total]
+            head = [b'\x00', b'\x0f', b'\x00', b'\x01']
+            head += [b'\x00', b'\x00', b'\x00', b'\x00', b'\x00', b'\x00', b'\x00', b'\x00']
+            txBuffer += head
 
-            # Envia a pergunta
-            print('Enviando pergunta...')
+            #End of Package
+            eop = [b'\xff', b'\xff', b'\xff']
+            txBuffer += eop
             com3.sendData(np.asarray(txBuffer))
-            print('Esperando resposta do server...')
-            print('')
 
+            print('Esperando resposta do server...')
             time_start = time.time()
             while com3.rx.getIsEmpty() == True:
                 if time.time() - time_start > 5:
@@ -63,51 +59,126 @@ def main():
             if com3.rx.getIsEmpty() == False:
                 handshake = False
 
-        ##### Servidor vivo #####
-        payload, tipo_pacote, numero_pacote, total_pacotes = ler_pacote(com3)
-        if tipo_pacote == 'handshake':
-            print('Servidor vivo')
+        ## Recebendo resposta do server ##
+        print('Recebendo resposta do server...')
+        tipo_pacote = com3.getData(1)[0]
+        if tipo_pacote == b'\x00':
+            print('Handshake realizado com sucesso')
             print('')
         else:
-            print('Servidor morto')
+            print('Handshake não realizado com sucesso')
             com3.disable()
             exit()
+        
+        tamanho_pacote = com3.getData(1)[0]
+        tamanho_pacote = int.from_bytes(tamanho_pacote, byteorder='big')
+        print('Tamanho do pacote: {}'.format(tamanho_pacote))
+        com3.getData(tamanho_pacote - 2)
+        print('Handshake recebido com sucesso')
+        print('')
+        ### HANDSHAKE ###
 
-        ### FRAGMENTACAO ###
+        ### FRANGMENTAÇÃO ###
+        print('Iniciando fragmentação')
+        print('')
         sorriso = 'sorriso.png'
         with open(sorriso, 'rb') as f:
             img = f.read()
         img = bytearray(img)
         tamanho_img = len(img)
-        print('Frangmentando imagem...')
-        print('')
+        print('Tamanho da imagem: {}'.format(tamanho_img))
 
-        lista_pacotes, total_pacotes = faz_fragmentacao(img, com3)
-        print('Fragmentação concluída')
-        print('')
-        
-        ### Enviando pacotes ###
-        print('Enviando pacotes...')
-        print('')
+        # Definindo tamanho do pacote
+        pacotes_totais = tamanho_img // 50
+        if tamanho_img % 50 != 0:
+            pacotes_totais += 1
+        print('Total de pacotes: {}'.format(pacotes_totais)) 
 
-        i = 0
-        while i < len(lista_pacotes):
-            com3.sendData(np.asarray(lista_pacotes[i]))
-            print('Pacote {} enviado'.format(i))
-            print('')
+        numero_pacote = 1
+        pacotes = []
+        cinquentas = 0
+        i=0
+        while i < tamanho_img:
+            if i % 50 == 0 and i < 1300:
+                # Head = [tipo, tamanho, numero, total]
+                head = bytearray([1, 65])
+                head += bytearray([numero_pacote, pacotes_totais])
+                head += bytearray([0,0,0,0,0,0,0,0])
+                txBuffer = bytearray(head)
+
+                # Payload
+                payload = img[i:i+50]
+                txBuffer += payload
+
+                #End of Package
+                eop = bytearray([255,255,255])
+                txBuffer += eop
+
+                pacotes += [txBuffer]
+                print('Pacote {} criado'.format(numero_pacote))
+                numero_pacote += 1
+                cinquentas += 1
+                
+
+            elif i % 1300 == 0 and i != 0:
+                faltando = tamanho_img - i
+                # Head = [tipo, tamanho, numero, total]
+                head = bytearray([1, faltando+15])
+                head += bytearray([numero_pacote, pacotes_totais])
+                head += bytearray([0,0,0,0,0,0,0,0])
+                txBuffer = bytearray(head)
+
+                # Payload
+                payload = img[i:]
+                txBuffer += payload
+
+                #End of Package
+                eop = bytearray([255,255,255])
+                txBuffer += eop
+
+                pacotes += [txBuffer]
+                # print('Pacote {} criado'.format(numero_pacote))
+                break
+            
             i += 1
-
-            payload, tipo_pacote, numero_pacote = ler_pacote(com3)
-            if int.from_bytes(payload, byteorder='big') == 1:
-                print('Erro ao receber pacote')
-                print('')
-                i -= 1 # faz o loop voltar para o pacote que deu erro e envia de novo  
         
-        ### RECEBENDO CONFIRMACAO DE TERMINO ###
-        payload, tipo_pacote, numero_pacote, total_pacotes = ler_pacote(com3)
-        if int.from_bytes(payload) == 0:
-            print('Imagem enviada com sucesso')
+        print('Fragmentação concluída')
+        print('Pacotes criados com sucesso')
+        print('')
+        ### FRANGMENTAÇÃO ###
+
+        ### ENVIO DOS PACOTES ###
+        for i in range(len(pacotes)):
             print('')
+            com3.sendData(np.asarray(pacotes[i]))
+            print(np.asarray(pacotes[i]))
+            print('Pacote {} enviado'.format(i+1))
+            print('Tamanho pacote: {}'.format(len(pacotes[i])))
+            time.sleep(1)
+
+            time_start = time.time()
+            while com3.rx.getIsEmpty() == True:
+                if time.time() - time_start > 5:
+                    print('Tempo de resposta excedido')
+                    tentar_novamente = input('Deseja tentar novamente? (s/n)')
+                    if tentar_novamente == 'n':
+                        print('Encerrando aplicação...')
+                        com3.disable()
+                        exit()
+                    elif tentar_novamente == 's':
+                        break
+
+            com3.getData(12)
+            check = int.from_bytes(com3.getData(1)[0], byteorder='big')
+            if check == 0:
+                print('Pacote {} recebido com sucesso'.format(i+1))
+            else:
+                print('Pacote {} recebido com ERRO'.format(i+1))
+                com3.disable()
+                exit()
+            com3.getData(3)
+
+
 
         #############################################  
     

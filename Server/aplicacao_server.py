@@ -1,10 +1,3 @@
-#####################################################
-# Camada Física da Computação
-#Carareto
-#11/08/2022
-#Aplicação
-####################################################
-
 from enlace import *
 import time
 import numpy as np
@@ -16,7 +9,6 @@ from Complementar import *
 #   python -m serial.tools.list_ports
 # se estiver usando windows, o gerenciador de dispositivos informa a porta
 serialName = "COM3"                  # Windows(variacao de)
-
 
 def main():
     try:
@@ -37,70 +29,113 @@ def main():
         print('')
 
         #############################################   
-        payload, tipo_pacote, numero_pacote, total_pacotes = ler_pacote(com3)
-        if tipo_pacote == 'handshake':
+        ### HANDSHAKE ###
+        # Tipo de pacote
+        tipo_pacote = com3.getData(1)[0]
+        if tipo_pacote == b'\x00':
             print('Handshake realizado com sucesso')
             print('')
         else:
             print('Handshake não realizado com sucesso')
             com3.disable()
             exit()
+        
+        tamanho_pacote = com3.getData(1)[0]
+        tamanho_pacote = int.from_bytes(tamanho_pacote, byteorder='big')
+        print('Tamanho do pacote: {}'.format(tamanho_pacote))
+        com3.getData(tamanho_pacote - 2)
+        print('Handshake recebido com sucesso')
+        print('')
 
-        pergunta = [b'\x01']
-        volta_handshake = cria_pacote('handshake', 1, 0, 1, pergunta, com3)
-        com3.sendData(np.asarray(volta_handshake))
-        time.sleep(1)
+        ## Respondendo Handshake ##
+        print('Respondendo Handshake')
+        txBuffer = []
+        # Head = [tipo, tamanho, numero, total]
+        head = [b'\x00', b'\x0f', b'\x00', b'\x01']
+        head += [b'\x00', b'\x00', b'\x00', b'\x00', b'\x00', b'\x00', b'\x00', b'\x00']
+        txBuffer += head
+
+        #End of Package
+        eop = [b'\xff', b'\xff', b'\xff']
+        txBuffer += eop
+        com3.sendData(np.asarray(txBuffer))
+        print('Handshake enviado com sucesso')
+        print('')
+        ### HANDSHAKE ###
 
         ### RECEBENDO PACOTES ###
         print('Recebendo pacotes...')
-        print('')
-        pacotes = []
         
-        pacote_esperado = 0
-        payload, tipo_pacote, numero_pacote, total_pacotes = ler_pacote(com3)
-        while numero_pacote <= total_pacotes:
-            pacotes += [payload]
-            payload, tipo_pacote, numero_pacote, total_pacotes = ler_pacote(com3)
-            
-            if pacote_esperado == numero_pacote:
-                print('Pacote recebido com sucesso')
-                confirmacao = cria_pacote('comando', 0, 0, np.asarray[b'\x00'], com3)
-                com3.sendData(np.asarray(confirmacao))
-                pacote_esperado += 1
-                print('Confirmação enviada')
+        nova_imagem = []
+        esperado = 1
+        total_pacotes = 10
+        i=0
+        while i < total_pacotes:
+            print('Recebendo pacote {}'.format(i))
+            tipo_pacote = com3.getData(1)[0]
+            tamanho_pacote = int.from_bytes(com3.getData(1)[0], byteorder='big')
+            numero_pacote = int.from_bytes(com3.getData(1)[0], byteorder='big')
+            total_pacotes = int.from_bytes(com3.getData(1)[0], byteorder='big')
+            com3.getData(tamanho_pacote - 4)
+
+            if numero_pacote == esperado:
+                payload = com3.getData(tamanho_pacote - 15)[0]
+                nova_imagem += payload
+                if com3.getData(3) == b'\xff\xff\xff':
+                    print('Pacote {} recebido com sucesso'.format(i))
+                    print('')
+                    esperado += 1
+                    i += 1
+
+                    # Head = [tipo, tamanho, numero, total]
+                    head = [b'\x00', b'\x0f', b'\x00', b'\x01']
+                    head += [b'\x00', b'\x00', b'\x00', b'\x00', b'\x00', b'\x00', b'\x00', b'\x00']
+                    txBuffer += head
+                    # Payload
+                    payload = [b'\x00']
+                    txBuffer += payload
+                    #End of Package
+                    eop = [b'\xff', b'\xff', b'\xff']
+                    txBuffer += eop
+                    com3.sendData(np.asarray(txBuffer))
+
+                else:
+                    print('Pacote {} não recebido'.format(i))
+                    print('')
+
+                    # Head = [tipo, tamanho, numero, total]
+                    head = [b'\x00', b'\x0f', b'\x00', b'\x01']
+                    head += [b'\x00', b'\x00', b'\x00', b'\x00', b'\x00', b'\x00', b'\x00', b'\x00']
+                    txBuffer += head
+                    # Payload
+                    payload = [b'\x01']
+                    txBuffer += payload
+                    #End of Package
+                    eop = [b'\xff', b'\xff', b'\xff']
+                    txBuffer += eop
+                    com3.sendData(np.asarray(txBuffer))
+                    print('Encerrando comunicação')
+                    com3.disable()
+                    exit()
             else:
-                print('Pacote recebido com erro')
-                confirmacao = cria_pacote('comando', 0, 0, np.asarray[b'\x01'], com3)
-                com3.sendData(np.asarray(confirmacao))
-                print('Confirmação de erro enviada')
+                # Head = [tipo, tamanho, numero, total]
+                head = [b'\x00', b'\x0f', b'\x00', b'\x01']
+                head += [b'\x00', b'\x00', b'\x00', b'\x00', b'\x00', b'\x00', b'\x00', b'\x00']
+                txBuffer += head
+                # Payload
+                payload = [b'\x01']
+                txBuffer += payload
+                #End of Package
+                eop = [b'\xff', b'\xff', b'\xff']
+                txBuffer += eop
+                com3.sendData(np.asarray(txBuffer))
+                print('Encerrando comunicação')
+                com3.disable()
+                exit()
+            
 
-   
-        print('Pacotes recebidos com sucesso')
-        print('')
 
-        ### TRANSFORMANDO BYTES EM IMAGEM ###
-        print('Transformando bytes em imagem...')
-        print('')
-        imagem = b''.join(pacotes)
-        print('Imagem transformada com sucesso')
-        print('')
 
-        ### SALVANDO IMAGEM ###
-        print('Salvando imagem...')
-        print('')
-        with open('imagem_recebida.png', 'wb') as f:
-            f.write(imagem)
-        print('Imagem salva com sucesso')
-        print('Imagem salva como: imagem_recebida.png')
-        print('')
-
-        ### ENVIANO CONFIRMAÇÃO DE RECEBIMENTO ###
-        print('Enviando confirmação de recebimento...')
-        print('')
-        confirmacao = cria_pacote('comando', 0, 0, np.asarray[b'\x00'], com3)
-        com3.sendData(np.asarray(confirmacao))
-        print('Confirmação de recebimento enviada')
-        print('')
 
         #############################################
     
