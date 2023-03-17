@@ -126,6 +126,19 @@ def main():
             ## Recebendo resposta do server ##
             print('Recebendo resposta do server...')
             print('')
+
+            time_start = time.time()
+            while com3.rx.getIsEmpty() == True:
+                if time.time() - time_start > 5:
+                    print('Tempo de resposta excedido')
+                    tentar_novamente = input('Deseja tentar novamente? (s/n)')
+                    if tentar_novamente == 'n':
+                        print('Encerrando aplicação...')
+                        com3.disable()
+                        exit()
+                    elif tentar_novamente == 's':
+                        break
+
             head = com3.getData(10)[0]
             tipo, remetente, livre, total_pacotes, numero_pacote, id_ou_tamanho, pacote_erro, ultimo_pacote = le_head(head)
             com3.getData(4)
