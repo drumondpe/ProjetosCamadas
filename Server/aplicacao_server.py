@@ -37,8 +37,8 @@ def main():
             print(head)
             tipo, remetente, livre, total_pacotes, numero_pacote, id_ou_tamanho, pacote_erro, ultimo_pacote = le_head(head)
 
-            if int.from_bytes(tipo, byteorder='big') == 1:
-                if int.from_bytes(remetente, byteorder='big') == 1:
+            if tipo == 1:
+                if remetente == 1:
                     ocioso = False
                     print('Handshake recebido com sucesso')
                     print('')
@@ -48,7 +48,22 @@ def main():
                 print('')
             
             com3.getData(4)
-        
+        time.sleep(1)
+
+        ## RESPONDENDO HANDSHAKE ##
+        print('Respondendo Handshake')
+        txBuffer = []
+        # Head = [tipo, remetente, livre, total_pacotes, numero_pacote, id_ou_tamanho, pacote_erro, ultimo_pacote][10]
+        head = cria_head('tipo2', 'servidor', 0, 1, 1, 10, 0, 0)
+        txBuffer = head
+
+        #End of Package
+        eop = cria_eop()
+        txBuffer += eop
+        com3.sendData(np.asarray(txBuffer))
+        print('Handshake respondido')
+        print('')
+
 
         com3.disable()
         exit()

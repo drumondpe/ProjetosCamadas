@@ -41,12 +41,11 @@ def main():
             eop = cria_eop()
             txBuffer += eop
             print('Enviando handshake...')
-            print(txBuffer)
             com3.sendData(np.asarray(txBuffer))
             print('Handshake enviado')
 
             time.sleep(1)
-            
+
             com3.disable()
             exit()
             
