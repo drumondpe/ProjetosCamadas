@@ -34,6 +34,7 @@ def main():
         ocioso = True
         while ocioso:
             head = com3.getData(10)[0]
+            print(head)
             tipo, remetente, livre, total_pacotes, numero_pacote, id_ou_tamanho, pacote_erro, ultimo_pacote = le_head(head)
 
             if int.from_bytes(tipo, byteorder='big') == 1:
@@ -45,6 +46,8 @@ def main():
                 time.sleep(1)
                 print('Handshake não recebido, tentando novamente...')
                 print('')
+            
+            com3.getData(4)
         
 
         com3.disable()
