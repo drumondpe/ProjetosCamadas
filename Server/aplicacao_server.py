@@ -96,7 +96,7 @@ def main():
                     print('Tempo de resposta excedido')
                     txBuffer = []
                     # Head = [tipo, remetente, livre, total_pacotes, numero_pacote, id_ou_tamanho, pacote_erro, ultimo_pacote][10]
-                    head = cria_head('tipo4', 'livre', 0, total_pacotes, i+1, 0, 0, 0)
+                    head = cria_head('tipo6', 'livre', 0, total_pacotes, i+1, 0, 0, 0)
                     txBuffer = head
 
                     #End of Package
