@@ -124,12 +124,12 @@ def main():
                     com3.disable()
                     exit()
 
-
             print('Recebendo pacote {}'.format(i+1))
             head = com3.getData(10)[0]
             tipo, remetente, livre, total_pacotes, numero_pacote, id_ou_tamanho, pacote_erro, ultimo_pacote = le_head(head)
             payload = com3.getData(id_ou_tamanho)[0]
             eop = com3.getData(4)[0]
+            
 
             if tipo == 3 and numero_pacote == esperado and eop == b'\xaa\xbb\xcc\xdd':
                 nova_imagem += payload
