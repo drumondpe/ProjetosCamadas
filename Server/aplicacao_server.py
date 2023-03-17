@@ -79,7 +79,10 @@ def main():
         ### DADOS ###
         print('Recebendo pacotes...')
         print('')
-        
+        print('Gerando arquivo txt...')
+        print('')
+        arquivo = open('sem_intercorrencia.txt', 'w')
+
         nova_imagem = []
         esperado = 1
         total_pacotes = 10
@@ -110,6 +113,9 @@ def main():
                 print('Pacote {} respondido'.format(i+1))
                 print('')
 
+                linha = str(time.asctime(time.localtime(time.time()))) + ' - ' + 'Pacote ' + str(i+1) + ' enviado' + ' /tipo4' + id_ou_tamanho
+                arquivo.write(linha + '\n')
+
                 esperado += 1
                 i += 1
             
@@ -131,7 +137,7 @@ def main():
                 print('')
 
 
-
+        arquivo.close()
         com3.disable()
         exit()
         
