@@ -58,17 +58,76 @@ def main():
                 print('')
                 time.sleep(1)
     
-        ## FRAGMENTANDO IMAGEM ##
-        print('Fragmentando imagem...')
+       ### FRANGMENTAÇÃO ###
+        print('Iniciando fragmentação')
         print('')
-        lista_pacotes, total_pacotes = faz_fragmentacao(img)
+        sorriso = 'sorriso.png'
+        with open(sorriso, 'rb') as f:
+            img = f.read()
+        img = bytearray(img)
+        tamanho_img = len(img)
+        print('Tamanho da imagem: {}'.format(tamanho_img))
+
+        # Definindo tamanho do pacote
+        pacotes_totais = tamanho_img // 114
+        if tamanho_img % 114 != 0:
+            pacotes_totais += 1
+        print('Total de pacotes: {}'.format(pacotes_totais)) 
+
 
         ## gerando arquivo txt ##
         print('Gerando arquivo txt...')
         print('')
-        arquivo = open('arquivo.txt', 'w')
-        for i in total_pacotes:
-            arquivo.write('Linha ' + str(i) + '\n')
+        arquivo = open('sem_intercorrencia.txt', 'w')
+        for i in range(pacotes_totais):
+            
+            if i != pacotes_totais-1:
+                linha = str(time.asctime(time.localtime(time.time()))) + ' - ' + 'Pacote ' + str(i+1) + ' enviado' + ' /tipo3' + ' /114'
+                arquivo.write(linha + '\n')
+
+                txBuffer = []
+                # Head = [tipo, remetente, livre, total_pacotes, numero_pacote, id_ou_tamanho, pacote_erro, ultimo_pacote][10]
+                head = cria_head('tipo3', 'livre', 0, pacotes_totais, i+1, 114, 0, 0)
+                txBuffer = head
+
+                # Payload
+                payload = bytearray(img[i*114:(i+1)*114])
+                txBuffer += payload
+
+                #End of Package
+                eop = cria_eop()
+                txBuffer += eop
+                print('Enviando pacote {}...'.format(i+1))
+                com3.sendData(np.asarray(txBuffer))
+                print('Pacote {} enviado'.format(i+1))
+                print('')
+
+            else:
+                linha = str(time.asctime(time.localtime(time.time()))) + ' - ' + 'Pacote ' + str(i+1) + ' enviado' + ' /tipo3' + ' /' + str(tamanho_img % 114)
+                arquivo.write(linha + '\n')
+
+                txBuffer = []
+                # Head = [tipo, remetente, livre, total_pacotes, numero_pacote, id_ou_tamanho, pacote_erro, ultimo_pacote][10]
+                head = cria_head('tipo3', 'livre', 0, pacotes_totais, i+1, tamanho_img % 114, 0, 0)
+                txBuffer = head
+
+                # Payload
+                payload = bytearray(img[i*114:])
+                txBuffer += payload
+
+                #End of Package
+                eop = cria_eop()
+                txBuffer += eop
+                print('Enviando pacote {}...'.format(i+1))
+                com3.sendData(np.asarray(txBuffer))
+                print('Pacote {} enviado'.format(i+1))
+                print('')
+
+            ## Recebendo resposta do server ##
+
+
+            
+
         arquivo.close()
         print('Arquivo txt gerado com sucesso')
         print('')
