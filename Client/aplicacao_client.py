@@ -124,9 +124,20 @@ def main():
                 print('')
 
             ## Recebendo resposta do server ##
+            print('Recebendo resposta do server...')
+            print('')
+            head = com3.getData(10)[0]
+            tipo, remetente, livre, total_pacotes, numero_pacote, id_ou_tamanho, pacote_erro, ultimo_pacote = le_head(head)
+            com3.getData(4)
+
+            if tipo == 4:
+                print('Mandar próximo pacote')
+            elif tipo == 6:
+                print('Pacote errado')
+                com3.disable()
+                exit()
 
 
-            
 
         arquivo.close()
         print('Arquivo txt gerado com sucesso')
