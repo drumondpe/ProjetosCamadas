@@ -87,7 +87,44 @@ def main():
         esperado = 1
         total_pacotes = 10
         i=0
+    
         while i < total_pacotes:
+            time_start1 = time.time()
+            time_start2 = time.time()
+            while com3.rx.getIsEmpty() == True:
+                if time.time() - time_start1 > 2:
+                    print('Tempo de resposta excedido')
+                    txBuffer = []
+                    # Head = [tipo, remetente, livre, total_pacotes, numero_pacote, id_ou_tamanho, pacote_erro, ultimo_pacote][10]
+                    head = cria_head('tipo4', 'livre', 0, total_pacotes, i+1, 0, 0, 0)
+                    txBuffer = head
+
+                    #End of Package
+                    eop = cria_eop()
+                    txBuffer += eop
+                    print('Enviando pacote {}...'.format(i+1))
+                    com3.sendData(np.asarray(txBuffer))
+
+                    time_start1 = time.time()
+
+                if time.time() - time_start2 > 20:
+                    txBuffer = []
+                    # Head = [tipo, remetente, livre, total_pacotes, numero_pacote, id_ou_tamanho, pacote_erro, ultimo_pacote][10]
+                    head = cria_head('tipo5', 'livre', 0, total_pacotes, i+1, 0, 0, 0)
+                    txBuffer = head
+
+                    #End of Package
+                    eop = cria_eop()
+                    txBuffer += eop
+                    print('Enviando pacote {}...'.format(i+1))
+                    com3.sendData(np.asarray(txBuffer))
+
+                    print('Tempo de resposta excedido')
+                    print('Encerrando comunicação')
+                    com3.disable()
+                    exit()
+
+
             print('Recebendo pacote {}'.format(i+1))
             head = com3.getData(10)[0]
             tipo, remetente, livre, total_pacotes, numero_pacote, id_ou_tamanho, pacote_erro, ultimo_pacote = le_head(head)
@@ -124,7 +161,6 @@ def main():
                 com3.disable()
                 exit()
             
-
             else:
                 print('Pacote {} COM ERRO'.format(i+1))
 

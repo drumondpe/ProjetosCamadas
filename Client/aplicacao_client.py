@@ -80,7 +80,7 @@ def main():
         print('')
         arquivo = open('sem_intercorrencia.txt', 'w')
         i=0
-        while i <= pacotes_totais:
+        while i < pacotes_totais:
             
             if i != pacotes_totais-1:
                 linha = str(time.asctime(time.localtime(time.time()))) + ' - ' + 'Pacote ' + str(i+1) + ' enviado' + ' /tipo3' + ' /114'
@@ -127,11 +127,6 @@ def main():
             ## Recebendo resposta do server ##
             print('Recebendo resposta do server...')
             print('')
-
-            head = com3.getData(10)[0]
-            tipo, remetente, livre, total_pacotes, numero_pacote, id_ou_tamanho, pacote_erro, ultimo_pacote = le_head(head)
-            com3.getData(4)
-
             time_start1 = time.time()
             time_start2 = time.time()
             while com3.rx.getIsEmpty() == True:
@@ -154,8 +149,6 @@ def main():
 
                     time_start1 = time.time()
 
-
-
                 if time.time() - time_start2 > 20:
                     txBuffer = []
                     # Head = [tipo, remetente, livre, total_pacotes, numero_pacote, id_ou_tamanho, pacote_erro, ultimo_pacote][10]
@@ -174,17 +167,22 @@ def main():
 
                     com3.disable()
                     exit()
+            head = com3.getData(10)[0]
+            tipo, remetente, livre, total_pacotes, numero_pacote, id_ou_tamanho, pacote_erro, ultimo_pacote = le_head(head)
+            com3.getData(4)
 
             if tipo == 4:
                 print('Mandar próximo pacote')
-                i += 1
+            elif tipo == 5:
+                print('comunicacao timedout')
+                com3.disable()
+                exit()
             elif tipo == 6:
                 print('Pacote errado')
                 i -= 1
 
-
+            i += 1
             
-
 
         #############################################  
     
