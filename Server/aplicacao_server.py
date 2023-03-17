@@ -94,7 +94,7 @@ def main():
             payload = com3.getData(id_ou_tamanho)[0]
             eop = com3.getData(4)[0]
 
-            if numero_pacote == esperado and eop == b'\xaa\xbb\xcc\xdd':
+            if tipo == 3 and numero_pacote == esperado and eop == b'\xaa\xbb\xcc\xdd':
                 nova_imagem += payload
 
                 print('Pacote {} recebido com sucesso'.format(i+1))
@@ -113,12 +113,18 @@ def main():
                 print('Pacote {} respondido'.format(i+1))
                 print('')
 
-                linha = str(time.asctime(time.localtime(time.time()))) + ' - ' + 'Pacote ' + str(i+1) + ' enviado' + ' /tipo4' + id_ou_tamanho
+                linha = str(time.asctime(time.localtime(time.time()))) + ' - ' + 'Pacote ' + str(i+1) + ' enviado' + ' /tipo4 ' + str(id_ou_tamanho)
                 arquivo.write(linha + '\n')
 
                 esperado += 1
                 i += 1
             
+            elif tipo == 5:
+                print('Matando aplicacao')
+                com3.disable()
+                exit()
+            
+
             else:
                 print('Pacote {} COM ERRO'.format(i+1))
 
@@ -136,86 +142,15 @@ def main():
                 print('Pacote {} respondido'.format(i+1))
                 print('')
 
-
         arquivo.close()
-        com3.disable()
-        exit()
+
+        ### criando imagem ###
+        print('Criando imagem...')
+        print('')
         
-        
-
-        ### RECEBENDO PACOTES ###
-        print('Recebendo pacotes...')
-        
-        nova_imagem = []
-        esperado = 1
-        total_pacotes = 10
-        i=0
-        while i < total_pacotes:
-            print('Recebendo pacote {}'.format(i))
-            tipo_pacote = com3.getData(1)[0]
-            tamanho_pacote = int.from_bytes(com3.getData(1)[0], byteorder='big')
-            numero_pacote = int.from_bytes(com3.getData(1)[0], byteorder='big')
-            total_pacotes = int.from_bytes(com3.getData(1)[0], byteorder='big')
-            com3.getData(tamanho_pacote - 4)
-
-            if numero_pacote == esperado:
-                payload = com3.getData(tamanho_pacote - 15)[0]
-                nova_imagem += payload
-                if com3.getData(3) == b'\xff\xff\xff':
-                    print('Pacote {} recebido com sucesso'.format(i))
-                    print('')
-                    esperado += 1
-                    i += 1
-
-                    # Head = [tipo, tamanho, numero, total]
-                    head = [b'\x00', b'\x0f', b'\x00', b'\x01']
-                    head += [b'\x00', b'\x00', b'\x00', b'\x00', b'\x00', b'\x00', b'\x00', b'\x00']
-                    txBuffer += head
-                    # Payload
-                    payload = [b'\x00']
-                    txBuffer += payload
-                    #End of Package
-                    eop = [b'\xff', b'\xff', b'\xff']
-                    txBuffer += eop
-                    com3.sendData(np.asarray(txBuffer))
-
-                else:
-                    print('Pacote {} não recebido'.format(i))
-                    print('')
-
-                    # Head = [tipo, tamanho, numero, total]
-                    head = [b'\x00', b'\x0f', b'\x00', b'\x01']
-                    head += [b'\x00', b'\x00', b'\x00', b'\x00', b'\x00', b'\x00', b'\x00', b'\x00']
-                    txBuffer += head
-                    # Payload
-                    payload = [b'\x01']
-                    txBuffer += payload
-                    #End of Package
-                    eop = [b'\xff', b'\xff', b'\xff']
-                    txBuffer += eop
-                    com3.sendData(np.asarray(txBuffer))
-                    print('Encerrando comunicação')
-                    com3.disable()
-                    exit()
-            else:
-                # Head = [tipo, tamanho, numero, total]
-                head = [b'\x00', b'\x0f', b'\x00', b'\x01']
-                head += [b'\x00', b'\x00', b'\x00', b'\x00', b'\x00', b'\x00', b'\x00', b'\x00']
-                txBuffer += head
-                # Payload
-                payload = [b'\x01']
-                txBuffer += payload
-                #End of Package
-                eop = [b'\xff', b'\xff', b'\xff']
-                txBuffer += eop
-                com3.sendData(np.asarray(txBuffer))
-                print('Encerrando comunicação')
-                com3.disable()
-                exit()
-            
-
-
-
+        imagem = open('imagem_recebida.png', 'wb')
+        imagem.write(bytes(nova_imagem))
+        imagem.close()
 
         #############################################
     
