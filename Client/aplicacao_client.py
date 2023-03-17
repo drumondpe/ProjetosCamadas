@@ -43,28 +43,48 @@ def main():
             print('Enviando handshake...')
             com3.sendData(np.asarray(txBuffer))
             print('Handshake enviado')
-
+            print('')
             time.sleep(1)
 
-            com3.disable()
-            exit()
-            
-            ###############################################################
-            print('Esperando resposta do server...')
-            time_start = time.time()
-            while com3.rx.getIsEmpty() == True:
-                if time.time() - time_start > 5:
-                    print('Tempo de resposta excedido')
-                    tentar_novamente = input('Deseja tentar novamente? (s/n)')
-                    if tentar_novamente == 'n':
-                        print('Encerrando aplicação...')
-                        com3.disable()
-                        exit()
-                    elif tentar_novamente == 's':
-                        break
-            
-            if com3.rx.getIsEmpty() == False:
+            ## Verificando se o server respondeu ##
+            head = com3.getData(10)[0]
+            tipo, remetente, livre, total_pacotes, numero_pacote, id_ou_tamanho, pacote_erro, ultimo_pacote = le_head(head)
+            if tipo == 2:
+                print('Handshake recebido com sucesso')
+                print('')
                 handshake = False
+            else:
+                print('Handshake não recebido')
+                print('')
+                time.sleep(1)
+        
+        ### DADOS ###
+        print('Começando a enviar os pacotes...')
+        print('')
+        
+
+
+
+
+        com3.disable()
+        exit()
+            
+            # ###############################################################
+            # print('Esperando resposta do server...')
+            # time_start = time.time()
+            # while com3.rx.getIsEmpty() == True:
+            #     if time.time() - time_start > 5:
+            #         print('Tempo de resposta excedido')
+            #         tentar_novamente = input('Deseja tentar novamente? (s/n)')
+            #         if tentar_novamente == 'n':
+            #             print('Encerrando aplicação...')
+            #             com3.disable()
+            #             exit()
+            #         elif tentar_novamente == 's':
+            #             break
+            
+            # if com3.rx.getIsEmpty() == False:
+            #     handshake = False
 
         ## Recebendo resposta do server ##
         print('Recebendo resposta do server...')
