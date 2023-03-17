@@ -80,7 +80,7 @@ def main():
         print('')
         arquivo = open('sem_intercorrencia.txt', 'w')
         i=0
-        while i <= len(pacotes_totais):
+        while i <= pacotes_totais:
             
             if i != pacotes_totais-1:
                 linha = str(time.asctime(time.localtime(time.time()))) + ' - ' + 'Pacote ' + str(i+1) + ' enviado' + ' /tipo3' + ' /114'
