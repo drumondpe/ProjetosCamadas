@@ -57,16 +57,17 @@ def main():
                 print('Handshake não recebido')
                 print('')
                 time.sleep(1)
-        
-        ### DADOS ###
-        #print('Começando a enviar os pacotes...')
-        #print('')
+    
+        ## FRAGMENTANDO IMAGEM ##
+        print('Fragmentando imagem...')
+        print('')
+        lista_pacotes, total_pacotes = faz_fragmentacao(img)
 
         ## gerando arquivo txt ##
         print('Gerando arquivo txt...')
         print('')
         arquivo = open('arquivo.txt', 'w')
-        for i in range(100):
+        for i in total_pacotes:
             arquivo.write('Linha ' + str(i) + '\n')
         arquivo.close()
         print('Arquivo txt gerado com sucesso')
