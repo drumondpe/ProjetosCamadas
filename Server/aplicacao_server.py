@@ -77,34 +77,65 @@ def main():
             
 
         ### DADOS ###
+        print('Recebendo pacotes...')
+        print('')
+        
+        nova_imagem = []
+        esperado = 1
+        total_pacotes = 10
+        i=0
+        while i < total_pacotes:
+            print('Recebendo pacote {}'.format(i+1))
+            head = com3.getData(10)[0]
+            tipo, remetente, livre, total_pacotes, numero_pacote, id_ou_tamanho, pacote_erro, ultimo_pacote = le_head(head)
+            payload = com3.getData(id_ou_tamanho)[0]
+            eop = com3.getData(4)[0]
+
+            if numero_pacote == esperado and eop == b'\xaa\xbb\xcc\xdd':
+                nova_imagem += payload
+
+                print('Pacote {} recebido com sucesso'.format(i+1))
+                
+                ## RESPONDENDO PACOTE ##
+                print('Respondendo pacote {}'.format(i+1))
+                txBuffer = []
+                # Head = [tipo, remetente, livre, total_pacotes, numero_pacote, id_ou_tamanho, pacote_erro, ultimo_pacote][10]
+                head = cria_head('tipo4', 'livre', 0, total_pacotes, numero_pacote, 0, 0, 0)
+                txBuffer = head
+
+                #End of Package
+                eop = cria_eop()
+                txBuffer += eop
+                com3.sendData(np.asarray(txBuffer))
+                print('Pacote {} respondido'.format(i+1))
+                print('')
+
+                esperado += 1
+                i += 1
+            
+            else:
+                print('Pacote {} COM ERRO'.format(i+1))
+
+                ## RESPONDENDO PACOTE ##
+                print('Respondendo pacote {}'.format(i+1))
+                txBuffer = []
+                # Head = [tipo, remetente, livre, total_pacotes, numero_pacote, id_ou_tamanho, pacote_erro, ultimo_pacote][10]
+                head = cria_head('tipo6', 'livre', 0, total_pacotes, numero_pacote, 0, i+1, i)
+                txBuffer = head
+
+                #End of Package
+                eop = cria_eop()
+                txBuffer += eop
+                com3.sendData(np.asarray(txBuffer))
+                print('Pacote {} respondido'.format(i+1))
+                print('')
 
 
 
         com3.disable()
         exit()
         
-        tamanho_pacote = com3.getData(1)[0]
-        tamanho_pacote = int.from_bytes(tamanho_pacote, byteorder='big')
-        print('Tamanho do pacote: {}'.format(tamanho_pacote))
-        com3.getData(tamanho_pacote - 2)
-        print('Handshake recebido com sucesso')
-        print('')
-
-        ## Respondendo Handshake ##
-        print('Respondendo Handshake')
-        txBuffer = []
-        # Head = [tipo, tamanho, numero, total]
-        head = [b'\x00', b'\x0f', b'\x00', b'\x01']
-        head += [b'\x00', b'\x00', b'\x00', b'\x00', b'\x00', b'\x00', b'\x00', b'\x00']
-        txBuffer += head
-
-        #End of Package
-        eop = [b'\xff', b'\xff', b'\xff']
-        txBuffer += eop
-        com3.sendData(np.asarray(txBuffer))
-        print('Handshake enviado com sucesso')
-        print('')
-        ### HANDSHAKE ###
+        
 
         ### RECEBENDO PACOTES ###
         print('Recebendo pacotes...')
