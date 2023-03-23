@@ -1,3 +1,0 @@
-Fri Mar 17 17:24:40 2023 - Pacote 1 enviado /tipo4 114
-Fri Mar 17 17:24:41 2023 - Pacote 2 enviado /tipo4 114
-Fri Mar 17 17:24:41 2023 - Pacote 3 enviado /tipo4 114

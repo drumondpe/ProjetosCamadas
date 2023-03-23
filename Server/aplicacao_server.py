@@ -103,6 +103,7 @@ def main():
                     eop = cria_eop()
                     txBuffer += eop
                     print('Enviando pacote {}...'.format(i+1))
+                    com3.rx.clearBuffer()
                     com3.sendData(np.asarray(txBuffer))
 
                     time_start1 = time.time()
