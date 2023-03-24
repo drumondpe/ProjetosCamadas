@@ -116,3 +116,18 @@ def faz_fragmentacao(payload_total, com3):
 
     return pacotes, total_pacotes
 ### FIM FAZ FRANGMENTAÇÃO ###
+
+### FAZ CRC ###
+def crc(data: bytes) -> int:
+    crc = 0xFFFF  # valor inicial do CRC
+    polynomial = 0x1021  # polinômio usado para cálculo do CRC
+
+    for byte in data:
+        crc ^= byte << 8  # XOR com o byte deslocado 8 bits à esquerda
+        for _ in range(8):
+            if crc & 0x8000:
+                crc = (crc << 1) ^ polynomial
+            else:
+                crc <<= 1
+
+    return crc & 0xFFFF  # retorna o CRC com 16 bits
