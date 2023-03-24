@@ -91,6 +91,7 @@ def main():
         esperado = 1
         total_pacotes = 10
         i=0
+        once = True
     
         while i < total_pacotes:
             time_start1 = time.time()
@@ -140,6 +141,9 @@ def main():
             linha = str(time.asctime(time.localtime(time.time()))) + ' - ' + 'Pacote ' + str(i+1) + ' recebido' + ' /tipo3 ' + str(id_ou_tamanho)
             arquivo.write(linha + '\n')
             
+            if once == True and numero_pacote == 5:
+                numero_pacote = 1
+                once = False
 
             if tipo == 3 and numero_pacote == esperado and eop == b'\xaa\xbb\xcc\xdd':
                 nova_imagem += payload
@@ -190,7 +194,7 @@ def main():
                 print('Pacote {} respondido'.format(i+1))
                 print('')
 
-                linha = str(time.asctime(time.localtime(time.time()))) + ' - ' + 'Respondendo pacote ' + str(i+1) + ' /tipo4 ' + str(id_ou_tamanho)
+                linha = str(time.asctime(time.localtime(time.time()))) + ' - ' + 'Pedindo reeinvio ' + ' /tipo6 '
                 arquivo.write(linha + '\n')
 
         arquivo.close()
