@@ -1,12 +1,31 @@
-Fri Mar 24 11:56:30 2023 - Pacote 1 recebido /tipo4 114
-Fri Mar 24 11:56:30 2023 - Pacote 2 recebido /tipo4 114
-Fri Mar 24 11:56:31 2023 - Pacote 3 recebido /tipo4 114
-Fri Mar 24 11:56:31 2023 - Pacote 4 recebido /tipo4 114
-Fri Mar 24 11:56:32 2023 - Pacote 5 recebido /tipo4 114
-Fri Mar 24 11:56:32 2023 - Pacote 6 recebido /tipo4 114
-Fri Mar 24 11:56:32 2023 - Pacote 7 recebido /tipo4 114
-Fri Mar 24 11:56:33 2023 - Pacote 8 recebido /tipo4 114
-Fri Mar 24 11:56:33 2023 - Pacote 9 recebido /tipo4 114
-Fri Mar 24 11:56:33 2023 - Pacote 10 recebido /tipo4 114
-Fri Mar 24 11:56:34 2023 - Pacote 11 recebido /tipo4 114
-Fri Mar 24 11:56:34 2023 - Pacote 12 recebido /tipo4 59
+Fri Mar 24 12:32:06 2023 - Handshake recebido /tipo1
+Fri Mar 24 12:32:06 2023 - Resposta handshake enviada /tipo2
+Fri Mar 24 12:32:07 2023 - Pacote 1 recebido /tipo3 114
+Fri Mar 24 12:32:07 2023 - Enviando confirmacao de recebimento /tipo4 
+Fri Mar 24 12:32:07 2023 - Pacote 2 recebido /tipo3 114
+Fri Mar 24 12:32:08 2023 - Enviando confirmacao de recebimento /tipo4 
+Fri Mar 24 12:32:08 2023 - Pacote 3 recebido /tipo3 114
+Fri Mar 24 12:32:08 2023 - Enviando confirmacao de recebimento /tipo4 
+Fri Mar 24 12:32:08 2023 - Pacote 4 recebido /tipo3 114
+Fri Mar 24 12:32:08 2023 - Enviando confirmacao de recebimento /tipo4 
+Fri Mar 24 12:32:09 2023 - Pacote 5 recebido /tipo3 114
+Fri Mar 24 12:32:09 2023 - Enviando confirmacao de recebimento /tipo4 
+Fri Mar 24 12:32:09 2023 - Pacote 6 recebido /tipo3 114
+Fri Mar 24 12:32:09 2023 - Enviando confirmacao de recebimento /tipo4 
+Fri Mar 24 12:32:09 2023 - Pacote 7 recebido /tipo3 114
+Fri Mar 24 12:32:09 2023 - Enviando confirmacao de recebimento /tipo4 
+Fri Mar 24 12:32:10 2023 - Pacote 8 recebido /tipo3 114
+Fri Mar 24 12:32:10 2023 - Enviando confirmacao de recebimento /tipo4 
+Fri Mar 24 12:32:10 2023 - Pacote 9 recebido /tipo3 114
+Fri Mar 24 12:32:10 2023 - Enviando confirmacao de recebimento /tipo4 
+Fri Mar 24 12:32:10 2023 - Pacote 10 recebido /tipo3 114
+Fri Mar 24 12:32:10 2023 - Enviando confirmacao de recebimento /tipo4 
+Fri Mar 24 12:32:13 2023 - Tempo excedido  /tipo4
+Fri Mar 24 12:32:15 2023 - Tempo excedido  /tipo4
+Fri Mar 24 12:32:17 2023 - Tempo excedido  /tipo4
+Fri Mar 24 12:32:19 2023 - Tempo excedido  /tipo4
+Fri Mar 24 12:32:21 2023 - Tempo excedido  /tipo4
+Fri Mar 24 12:32:21 2023 - Pacote 11 recebido /tipo3 114
+Fri Mar 24 12:32:21 2023 - Enviando confirmacao de recebimento /tipo4 
+Fri Mar 24 12:32:22 2023 - Pacote 12 recebido /tipo3 59
+Fri Mar 24 12:32:22 2023 - Enviando confirmacao de recebimento /tipo4 

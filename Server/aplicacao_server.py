@@ -100,40 +100,45 @@ def main():
                     print('Tempo de resposta excedido')
                     txBuffer = []
                     # Head = [tipo, remetente, livre, total_pacotes, numero_pacote, id_ou_tamanho, pacote_erro, ultimo_pacote][10]
-                    head = cria_head('tipo6', 'livre', 0, total_pacotes, i+1, 0, 0, 0)
+                    head = cria_head('tipo4', 'livre', 0, total_pacotes, i+1, 0, 0, 0)
                     txBuffer = head
-
                     #End of Package
                     eop = cria_eop()
                     txBuffer += eop
                     print('Enviando pacote {}...'.format(i+1))
                     com3.rx.clearBuffer()
                     com3.sendData(np.asarray(txBuffer))
-
                     time_start1 = time.time()
+
+                    linha = str(time.asctime(time.localtime(time.time()))) + ' - ' + 'Tempo excedido ' + ' /tipo4'
+                    arquivo.write(linha + '\n') 
 
                 if time.time() - time_start2 > 20:
                     txBuffer = []
                     # Head = [tipo, remetente, livre, total_pacotes, numero_pacote, id_ou_tamanho, pacote_erro, ultimo_pacote][10]
                     head = cria_head('tipo5', 'livre', 0, total_pacotes, i+1, 0, 0, 0)
                     txBuffer = head
-
                     #End of Package
                     eop = cria_eop()
                     txBuffer += eop
                     print('Enviando pacote {}...'.format(i+1))
                     com3.sendData(np.asarray(txBuffer))
-
                     print('Tempo de resposta excedido')
                     print('Encerrando comunicação')
+                    linha = str(time.asctime(time.localtime(time.time()))) + ' - ' + 'Timeout ' + ' /tipo5'
+                    arquivo.write(linha + '\n') 
                     com3.disable()
                     exit()
+
 
             print('Recebendo pacote {}'.format(i+1))
             head = com3.getData(10)[0]
             tipo, remetente, livre, total_pacotes, numero_pacote, id_ou_tamanho, pacote_erro, ultimo_pacote = le_head(head)
             payload = com3.getData(id_ou_tamanho)[0]
             eop = com3.getData(4)[0]
+
+            linha = str(time.asctime(time.localtime(time.time()))) + ' - ' + 'Pacote ' + str(i+1) + ' recebido' + ' /tipo3 ' + str(id_ou_tamanho)
+            arquivo.write(linha + '\n')
             
 
             if tipo == 3 and numero_pacote == esperado and eop == b'\xaa\xbb\xcc\xdd':
@@ -155,13 +160,15 @@ def main():
                 print('Pacote {} respondido'.format(i+1))
                 print('')
 
-                linha = str(time.asctime(time.localtime(time.time()))) + ' - ' + 'Pacote ' + str(i+1) + ' recebido' + ' /tipo3 ' + str(id_ou_tamanho)
+                linha = str(time.asctime(time.localtime(time.time()))) + ' - ' + 'Enviando confirmacao de recebimento' + ' /tipo4 '
                 arquivo.write(linha + '\n')
 
                 esperado += 1
                 i += 1
             
             elif tipo == 5:
+                linha = str(time.asctime(time.localtime(time.time()))) + ' - ' + 'Timeout' + ' /tipo5 '
+                arquivo.write(linha + '\n')
                 print('Matando aplicacao')
                 com3.disable()
                 exit()
