@@ -27,6 +27,9 @@ def main():
 
         print("Abriu a comunicação")
         print('')
+        print('Gerando arquivo txt...')
+        print('')
+        arquivo = open('sem_intercorrencia.txt', 'w')
 
         #############################################   
         ### HANDSHAKE ###
@@ -38,7 +41,9 @@ def main():
             tipo, remetente, livre, total_pacotes, numero_pacote, id_ou_tamanho, pacote_erro, ultimo_pacote = le_head(head)
             com3.getData(4)
 
-            if tipo == 1 and remetente == 1:                
+            if tipo == 1 and remetente == 1:
+                linha = str(time.asctime(time.localtime(time.time()))) + ' - ' + 'Handshake recebido' + ' /tipo1'
+                arquivo.write(linha + '\n')                
                 ocioso = False
                 print('Handshake recebido com sucesso')
                 print('')
@@ -56,6 +61,8 @@ def main():
                 com3.sendData(np.asarray(txBuffer))
                 print('Handshake respondido')
                 print('')
+                linha = str(time.asctime(time.localtime(time.time()))) + ' - ' + 'Resposta handshake enviada' + ' /tipo2'
+                arquivo.write(linha + '\n')
                     
             else:
                 time.sleep(1)
@@ -79,9 +86,6 @@ def main():
         ### DADOS ###
         print('Recebendo pacotes...')
         print('')
-        print('Gerando arquivo txt...')
-        print('')
-        arquivo = open('sem_intercorrencia.txt', 'w')
 
         nova_imagem = []
         esperado = 1
@@ -151,7 +155,7 @@ def main():
                 print('Pacote {} respondido'.format(i+1))
                 print('')
 
-                linha = str(time.asctime(time.localtime(time.time()))) + ' - ' + 'Pacote ' + str(i+1) + ' enviado' + ' /tipo4 ' + str(id_ou_tamanho)
+                linha = str(time.asctime(time.localtime(time.time()))) + ' - ' + 'Pacote ' + str(i+1) + ' recebido' + ' /tipo3 ' + str(id_ou_tamanho)
                 arquivo.write(linha + '\n')
 
                 esperado += 1
@@ -178,6 +182,9 @@ def main():
                 com3.sendData(np.asarray(txBuffer))
                 print('Pacote {} respondido'.format(i+1))
                 print('')
+
+                linha = str(time.asctime(time.localtime(time.time()))) + ' - ' + 'Respondendo pacote ' + str(i+1) + ' /tipo4 ' + str(id_ou_tamanho)
+                arquivo.write(linha + '\n')
 
         arquivo.close()
 

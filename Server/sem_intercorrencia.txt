@@ -1,0 +1,12 @@
+Fri Mar 24 11:56:30 2023 - Pacote 1 recebido /tipo4 114
+Fri Mar 24 11:56:30 2023 - Pacote 2 recebido /tipo4 114
+Fri Mar 24 11:56:31 2023 - Pacote 3 recebido /tipo4 114
+Fri Mar 24 11:56:31 2023 - Pacote 4 recebido /tipo4 114
+Fri Mar 24 11:56:32 2023 - Pacote 5 recebido /tipo4 114
+Fri Mar 24 11:56:32 2023 - Pacote 6 recebido /tipo4 114
+Fri Mar 24 11:56:32 2023 - Pacote 7 recebido /tipo4 114
+Fri Mar 24 11:56:33 2023 - Pacote 8 recebido /tipo4 114
+Fri Mar 24 11:56:33 2023 - Pacote 9 recebido /tipo4 114
+Fri Mar 24 11:56:33 2023 - Pacote 10 recebido /tipo4 114
+Fri Mar 24 11:56:34 2023 - Pacote 11 recebido /tipo4 114
+Fri Mar 24 11:56:34 2023 - Pacote 12 recebido /tipo4 59

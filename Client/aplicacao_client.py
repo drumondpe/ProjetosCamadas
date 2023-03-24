@@ -25,6 +25,10 @@ def main():
 
         print("Abriu a comunicação")
         print("")
+        ## gerando arquivo txt ##
+        print('Gerando arquivo txt...')
+        print('')
+        arquivo = open('sem_intercorrencia.txt', 'w')
 
         #############################################   
         ### HANDSHAKE ###
@@ -44,12 +48,18 @@ def main():
             com3.sendData(np.asarray(txBuffer))
             print('Handshake enviado')
             print('')
+            linha = str(time.asctime(time.localtime(time.time()))) + ' - ' + 'Handshake enviado' + ' /tipo1'
+            arquivo.write(linha + '\n')
+
             time.sleep(1)
 
             ## Verificando se o server respondeu ##
             head = com3.getData(10)[0]
             tipo, remetente, livre, total_pacotes, numero_pacote, id_ou_tamanho, pacote_erro, ultimo_pacote = le_head(head)
+            com3.getData(4)
             if tipo == 2:
+                linha = str(time.asctime(time.localtime(time.time()))) + ' - ' + 'Handshake recebido com sucesso' + ' /tipo2'
+                arquivo.write(linha + '\n')
                 print('Handshake recebido com sucesso')
                 print('')
                 handshake = False
@@ -57,6 +67,7 @@ def main():
                 print('Handshake não recebido')
                 print('')
                 time.sleep(1)
+            
     
        ### FRANGMENTAÇÃO ###
         print('Iniciando fragmentação')
@@ -75,10 +86,6 @@ def main():
         print('Total de pacotes: {}'.format(pacotes_totais)) 
 
 
-        ## gerando arquivo txt ##
-        print('Gerando arquivo txt...')
-        print('')
-        arquivo = open('sem_intercorrencia.txt', 'w')
         i=0
         while i < pacotes_totais:
             
@@ -161,11 +168,17 @@ def main():
 
             if tipo == 4:
                 print('Mandar próximo pacote')
+                linha = str(time.asctime(time.localtime(time.time()))) + ' - ' + 'Confirmação de recebimento do pacote ' + ' /tipo4'
+                arquivo.write(linha + '\n')
             elif tipo == 5:
                 print('comunicacao timedout')
+                linha = str(time.asctime(time.localtime(time.time()))) + ' - ' + 'Mensagem de timeout recebida ' + ' /tipo5'
+                arquivo.write(linha + '\n')
                 com3.disable()
                 exit()
             elif tipo == 6:
+                linha = str(time.asctime(time.localtime(time.time()))) + ' - ' + 'Ultimo pacote recebido com erro ' + ' /tipo6'
+                arquivo.write(linha + '\n')
                 print('Pacote errado')
                 i -= 1
 
