@@ -142,6 +142,8 @@ def main():
                     print('Reenviando pacote {}...'.format(i+1))
                     com3.sendData(np.asarray(txBuffer))
                     time_start1 = time.time()
+                    linha = str(time.asctime(time.localtime(time.time()))) + ' - ' + 'Pacote ' + str(i+1) + ' enviado' + ' /tipo3' + ' /114'
+                    arquivo.write(linha + '\n')
 
                 if time.time() - time_start2 > 20:
                     txBuffer = []
@@ -158,6 +160,9 @@ def main():
                     txBuffer += eop
                     print('Enviando pacote {}...'.format(i+1))
                     com3.sendData(np.asarray(txBuffer))
+
+                    linha = str(time.asctime(time.localtime(time.time()))) + ' - ' + 'Matando client' + ' /tipo5'
+                    arquivo.write(linha + '\n')
 
                     com3.disable()
                     exit()
