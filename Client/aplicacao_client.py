@@ -132,21 +132,8 @@ def main():
             while com3.rx.getIsEmpty() == True:
                 if time.time() - time_start1 > 5:
                     print('Tempo de resposta excedido')
-                    txBuffer = []
-                    # Head = [tipo, remetente, livre, total_pacotes, numero_pacote, id_ou_tamanho, pacote_erro, ultimo_pacote][10]
-                    head = cria_head('tipo3', 'livre', 0, pacotes_totais, i+1, 114, 0, 0)
-                    txBuffer = head
-
-                    # Payload
-                    payload = bytearray(img[i*114:(i+1)*114])
-                    txBuffer += payload
-
-                    #End of Package
-                    eop = cria_eop()
-                    txBuffer += eop
-                    print('Enviando pacote {}...'.format(i+1))
+                    print('Reenviando pacote {}...'.format(i+1))
                     com3.sendData(np.asarray(txBuffer))
-
                     time_start1 = time.time()
 
                 if time.time() - time_start2 > 20:
@@ -171,7 +158,6 @@ def main():
             head = com3.getData(10)[0]
             tipo, remetente, livre, total_pacotes, numero_pacote, id_ou_tamanho, pacote_erro, ultimo_pacote = le_head(head)
             com3.getData(4)
-            print(tipo)
 
             if tipo == 4:
                 print('Mandar próximo pacote')

@@ -1,0 +1,12 @@
+Fri Mar 24 11:53:35 2023 - Pacote 1 enviado /tipo3 /114
+Fri Mar 24 11:53:36 2023 - Pacote 2 enviado /tipo3 /114
+Fri Mar 24 11:53:36 2023 - Pacote 3 enviado /tipo3 /114
+Fri Mar 24 11:53:36 2023 - Pacote 4 enviado /tipo3 /114
+Fri Mar 24 11:53:36 2023 - Pacote 5 enviado /tipo3 /114
+Fri Mar 24 11:53:37 2023 - Pacote 6 enviado /tipo3 /114
+Fri Mar 24 11:53:37 2023 - Pacote 7 enviado /tipo3 /114
+Fri Mar 24 11:53:37 2023 - Pacote 8 enviado /tipo3 /114
+Fri Mar 24 11:53:38 2023 - Pacote 9 enviado /tipo3 /114
+Fri Mar 24 11:53:38 2023 - Pacote 10 enviado /tipo3 /114
+Fri Mar 24 11:53:39 2023 - Pacote 11 enviado /tipo3 /114
+Fri Mar 24 11:53:39 2023 - Pacote 12 enviado /tipo3 /59
