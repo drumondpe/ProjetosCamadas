@@ -1,14 +1,8 @@
-#####################################################
-# Camada Física da Computação
-#Carareto
-#11/08/2022
-#Aplicação
-####################################################
-
 from enlace import *
 import time
 import numpy as np
-import random 
+import random
+from Complementar import *
 
 # voce deverá descomentar e configurar a porta com através da qual ira fazer comunicaçao
 #   para saber a sua porta, execute no terminal :
@@ -16,12 +10,9 @@ import random
 # se estiver usando windows, o gerenciador de dispositivos informa a porta
 serialName = "COM3"                  # Windows(variacao de)
 
-
 def main():
     try:
         print("Iniciou o main")
-        #declaramos um objeto do tipo enlace com o nome "com". Essa é a camada inferior à aplicação. Observe que um parametro
-        #para declarar esse objeto é o nome da porta.
         com3 = enlace(serialName)
         # Ativa comunicacao. Inicia os threads e a comunicação seiral 
         com3.enable()
@@ -32,114 +23,174 @@ def main():
         time.sleep(1)
         #### Resolvendo Bug ####
 
-        #Se chegamos até aqui, a comunicação foi aberta com sucesso. Faça um print para informar.
         print("Abriu a comunicação")
-        
+        print("")
+        ## gerando arquivo txt ##
+        print('Gerando arquivo txt...')
+        print('')
+        arquivo = open('sem_intercorrencia.txt', 'w')
 
         #############################################   
-        # Gera dados a serem enviados
-        
-        txBuffer = []
+        ### HANDSHAKE ###
+        print("Iniciando Handshake")
 
-        comando0 = [b'\xCC']                #1 bytes
-        comando1 = [b'\x00', b'\x00', b'\x00', b'\x00']    #4 bytes
-        comando2 = [b'\x00', b'\x00', b'\xAA', b'\x00']    #4 bytes
-        comando3 = [b'\xAA', b'\x00', b'\x00']        #3 bytes
-        comando4 = [b'\x00', b'\xAA', b'\x00']        #3 bytes
-        comando5 = [b'\x00', b'\x00', b'\xAA']        #3 bytes
-        comando6 = [b'\x00', b'\xAA']            #2 bytes
-        comando7 = [b'\xAA', b'\x00']            #2 bytes
-        comando8 = [b'\x00']                #1 byte
-        comando9 = [b'\xFF']                #1 byte
+        handshake = True
+        while handshake:
+            txBuffer = []
+            # Head = [tipo, remetente, livre, total_pacotes, numero_pacote, id_ou_tamanho, pacote_erro, ultimo_pacote][10]
+            head = cria_head('tipo1', 'servidor', 0, 1, 1, 10, 0, 0)
+            txBuffer = head
 
+            #End of Package
+            eop = cria_eop()
+            txBuffer += eop
+            print('Enviando handshake...')
+            com3.sendData(np.asarray(txBuffer))
+            print('Handshake enviado')
+            print('')
+            linha = str(time.asctime(time.localtime(time.time()))) + ' - ' + 'Handshake enviado' + ' /tipo1'
+            arquivo.write(linha + '\n')
+
+            time.sleep(1)
+
+            ## Verificando se o server respondeu ##
+            head = com3.getData(10)[0]
+            tipo, remetente, livre, total_pacotes, numero_pacote, id_ou_tamanho, pacote_erro, ultimo_pacote = le_head(head)
+            com3.getData(4)
+            if tipo == 2:
+                linha = str(time.asctime(time.localtime(time.time()))) + ' - ' + 'Handshake recebido com sucesso' + ' /tipo2'
+                arquivo.write(linha + '\n')
+                print('Handshake recebido com sucesso')
+                print('')
+                handshake = False
+            else:
+                print('Handshake não recebido')
+                print('')
+                time.sleep(1)
+            
+    
+       ### FRANGMENTAÇÃO ###
+        print('Iniciando fragmentação')
         print('')
-        print('Gerando comandos...')
-        quantidade = random.randint(10, 30)
+        sorriso = 'sorriso.png'
+        with open(sorriso, 'rb') as f:
+            img = f.read()
+        img = bytearray(img)
+        tamanho_img = len(img)
+        print('Tamanho da imagem: {}'.format(tamanho_img))
 
-        for i in range(quantidade):
+        # Definindo tamanho do pacote
+        pacotes_totais = tamanho_img // 114
+        if tamanho_img % 114 != 0:
+            pacotes_totais += 1
+        print('Total de pacotes: {}'.format(pacotes_totais)) 
 
-            comando = random.randint(1, 9)
-            if comando == 1:
-                txBuffer += [b'\x04'] + comando1
-            if comando == 2:
-                txBuffer += [b'\x04'] + comando2
-            if comando == 3:
-                txBuffer += [b'\x03'] + comando3
-            if comando == 4:
-                txBuffer += [b'\x03'] + comando4
-            if comando == 5:
-                txBuffer += [b'\x03'] + comando5
-            if comando == 6:
-                txBuffer += [b'\x02'] + comando6
-            if comando == 7:
-                txBuffer += [b'\x02'] + comando7
-            if comando == 8:
-                txBuffer += [b'\x01'] + comando8
-            if comando == 9:
-                txBuffer += [b'\x01'] + comando9
 
-        txBuffer += comando0
+        i=0
+        while i < pacotes_totais:
+            
+            if i != pacotes_totais-1:
+                linha = str(time.asctime(time.localtime(time.time()))) + ' - ' + 'Pacote ' + str(i+1) + ' enviado' + ' /tipo3' + ' /114'
+                arquivo.write(linha + '\n')
 
-        print('')
-        print('Quantidade de comandos: {}' .format(quantidade))
-        print('Array de bytes: {}' .format(txBuffer))
-        print('')
-        
+                txBuffer = []
+                # Head = [tipo, remetente, livre, total_pacotes, numero_pacote, id_ou_tamanho, pacote_erro, ultimo_pacote][10]
+                head = cria_head('tipo3', 'livre', 0, pacotes_totais, i+1, 114, 0, 0)
+                txBuffer = head
 
-        #############################################  
-        #finalmente vamos transmitir os todos. Para isso usamos a funçao sendData que é um método da camada enlace.
-        #faça um print para avisar que a transmissão vai começar.
-        #tente entender como o método send funciona!
-        #Cuidado! Apenas trasmita arrays de bytes!
-               
-        com3.sendData(np.asarray(txBuffer))  #as array apenas como boa pratica para casos de ter uma outra forma de dados
-        
-        print('Esperando resposta do server...')
-        print('')
+                # Payload
+                payload = bytearray(img[i*114:(i+1)*114])
+                txBuffer += payload
 
-        time_start = time.time()
-        while com3.rx.getIsEmpty() == True:
-            if time.time() - time_start > 5:
-                print('Tempo de resposta excedido')
-                print('Encerrando aplicação...')
+                #End of Package
+                eop = cria_eop()
+                txBuffer += eop
+                print('Enviando pacote {}...'.format(i+1))
+                com3.sendData(np.asarray(txBuffer))
+                print('Pacote {} enviado'.format(i+1))
+                print('')
+
+            else:
+                linha = str(time.asctime(time.localtime(time.time()))) + ' - ' + 'Pacote ' + str(i+1) + ' enviado' + ' /tipo3' + ' /' + str(tamanho_img % 114)
+                arquivo.write(linha + '\n')
+
+                txBuffer = []
+                # Head = [tipo, remetente, livre, total_pacotes, numero_pacote, id_ou_tamanho, pacote_erro, ultimo_pacote][10]
+                head = cria_head('tipo3', 'livre', 0, pacotes_totais, i+1, tamanho_img % 114, 0, 0)
+                txBuffer = head
+
+                # Payload
+                payload = bytearray(img[i*114:])
+                txBuffer += payload
+
+                #End of Package
+                eop = cria_eop()
+                txBuffer += eop
+                print('Enviando pacote {}...'.format(i+1))
+                com3.sendData(np.asarray(txBuffer))
+                print('Pacote {} enviado'.format(i+1))
+                print('')
+
+            ## Recebendo resposta do server ##
+            print('Recebendo resposta do server...')
+            print('')
+            time_start1 = time.time()
+            time_start2 = time.time()
+            while com3.rx.getIsEmpty() == True:
+                if time.time() - time_start1 > 5:
+                    print('Tempo de resposta excedido')
+                    print('Reenviando pacote {}...'.format(i+1))
+                    com3.sendData(np.asarray(txBuffer))
+                    time_start1 = time.time()
+                    linha = str(time.asctime(time.localtime(time.time()))) + ' - ' + 'Pacote ' + str(i+1) + ' enviado' + ' /tipo3' + ' /114'
+                    arquivo.write(linha + '\n')
+
+                if time.time() - time_start2 > 20:
+                    txBuffer = []
+                    # Head = [tipo, remetente, livre, total_pacotes, numero_pacote, id_ou_tamanho, pacote_erro, ultimo_pacote][10]
+                    head = cria_head('tipo5', 'livre', 0, pacotes_totais, i+1, tamanho_img % 114, 0, 0)
+                    txBuffer = head
+
+                    # Payload
+                    payload = bytearray(img[i*114:])
+                    txBuffer += payload
+
+                    #End of Package
+                    eop = cria_eop()
+                    txBuffer += eop
+                    print('Enviando pacote {}...'.format(i+1))
+                    com3.sendData(np.asarray(txBuffer))
+
+                    linha = str(time.asctime(time.localtime(time.time()))) + ' - ' + 'Matando client' + ' /tipo5'
+                    arquivo.write(linha + '\n')
+
+                    com3.disable()
+                    exit()
+                    
+            head = com3.getData(10)[0]
+            tipo, remetente, livre, total_pacotes, numero_pacote, id_ou_tamanho, pacote_erro, ultimo_pacote = le_head(head)
+            com3.getData(4)
+
+            if tipo == 4:
+                print('Mandar próximo pacote')
+                linha = str(time.asctime(time.localtime(time.time()))) + ' - ' + 'Confirmação de recebimento do pacote ' + ' /tipo4'
+                arquivo.write(linha + '\n')
+            elif tipo == 5:
+                print('comunicacao timedout')
+                linha = str(time.asctime(time.localtime(time.time()))) + ' - ' + 'Mensagem de timeout recebida ' + ' /tipo5'
+                arquivo.write(linha + '\n')
                 com3.disable()
                 exit()
+            elif tipo == 6:
+                linha = str(time.asctime(time.localtime(time.time()))) + ' - ' + 'Ultimo pacote recebido com erro ' + ' /tipo6'
+                arquivo.write(linha + '\n')
+                print('Pacote errado')
+                i -= 1
 
-        resposta = com3.getData(1)
-        resposta = int.from_bytes(resposta[0], byteorder="big")
-        print("Quantidade recebida pelo server: {} ". format(resposta))
-
-        if resposta != quantidade:
-            print('Quantidade de comandos enviados e recebidos não conferem')
-            print('Encerrando aplicação...')
-            com3.disable()
-            exit()
+            i += 1
             
-        # A camada enlace possui uma camada inferior, TX possui um método para conhecermos o status da transmissão
-        # O método não deve estar fincionando quando usado como abaixo. deve estar retornando zero. Tente entender como esse método funciona e faça-o funcionar.
-        
-        ###### talvez mudar
-        # txSize = com3.tx.getStatus()
-        # print('enviou = {}' .format(txSize))
-        ######
 
-        #Agora vamos iniciar a recepção dos dados. Se algo chegou ao RX, deve estar automaticamente guardado
-        #Observe o que faz a rotina dentro do thread RX
-        #print um aviso de que a recepção vai começar.
-        
-        #Será que todos os bytes enviados estão realmente guardadas? Será que conseguimos verificar?
-        #Veja o que faz a funcao do enlaceRX  getBufferLen
-      
-        #acesso aos bytes recebidos
-        # txLen = len(txBuffer)
-        # rxBuffer, nRx = com3.getData(txLen)
-        # print("recebeu {} bytes" .format(len(rxBuffer)))
-        
-        # for i in range(len(rxBuffer)):
-        #     print("recebeu {}" .format(rxBuffer[i]))
-        
-
-            
+        #############################################  
     
         # Encerra comunicação
         print("-------------------------")
