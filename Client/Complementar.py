@@ -1,7 +1,7 @@
 import numpy as np
 
 ### CRIAR HEAD ###
-def cria_head(tipo, remetente, livre, total_pacotes, numero_pacote, id_ou_tamanho, pacote_erro, ultimo_pacote):
+def cria_head(tipo, remetente, livre, total_pacotes, numero_pacote, id_ou_tamanho, pacote_erro, ultimo_pacote, crc):
     head = bytearray([])
 
     ### Tipo ###
@@ -42,8 +42,8 @@ def cria_head(tipo, remetente, livre, total_pacotes, numero_pacote, id_ou_tamanh
     ### Último Pacote ###
     head += bytearray([ultimo_pacote])
 
-    ### Completa ultimos 2 bytes ###
-    head += bytearray([0,0])
+    ### CRC ###
+    head += bytearray([crc])
 
     return head
 
