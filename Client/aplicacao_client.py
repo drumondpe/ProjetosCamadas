@@ -37,8 +37,8 @@ def main():
         handshake = True
         while handshake:
             txBuffer = []
-            # Head = [tipo, remetente, livre, total_pacotes, numero_pacote, id_ou_tamanho, pacote_erro, ultimo_pacote][10]
-            head = cria_head('tipo1', 'servidor', 0, 1, 1, 10, 0, 0)
+            # Head = [tipo, remetente, livre, total_pacotes, numero_pacote, id_ou_tamanho, pacote_erro, ultimo_pacote][10], crc[2]
+            head = cria_head('tipo1', 'servidor', 0, 1, 1, 10, 0, 0, [0,0])
             txBuffer = head
 
             #End of Package
@@ -55,7 +55,7 @@ def main():
 
             ## Verificando se o server respondeu ##
             head = com3.getData(10)[0]
-            tipo, remetente, livre, total_pacotes, numero_pacote, id_ou_tamanho, pacote_erro, ultimo_pacote = le_head(head)
+            tipo, remetente, livre, total_pacotes, numero_pacote, id_ou_tamanho, pacote_erro, ultimo_pacote, crc = le_head(head)
             com3.getData(4)
             if tipo == 2:
                 linha = str(time.asctime(time.localtime(time.time()))) + ' - ' + 'Handshake recebido com sucesso' + ' /tipo2'
@@ -93,13 +93,16 @@ def main():
                 linha = str(time.asctime(time.localtime(time.time()))) + ' - ' + 'Pacote ' + str(i+1) + ' enviado' + ' /tipo3' + ' /114'
                 arquivo.write(linha + '\n')
 
-                txBuffer = []
-                # Head = [tipo, remetente, livre, total_pacotes, numero_pacote, id_ou_tamanho, pacote_erro, ultimo_pacote][10]
-                head = cria_head('tipo3', 'livre', 0, pacotes_totais, i+1, 114, 0, 0)
-                txBuffer = head
-
                 # Payload
                 payload = bytearray(img[i*114:(i+1)*114])
+                crc = calcular_CRC(payload)
+
+                txBuffer = []
+                # Head = [tipo, remetente, livre, total_pacotes, numero_pacote, id_ou_tamanho, pacote_erro, ultimo_pacote][10], crc[2]
+                head = cria_head('tipo3', 'livre', 0, pacotes_totais, i+1, 114, 0, 0, crc)
+                txBuffer = head
+
+                # Adicionando payload
                 txBuffer += payload
 
                 #End of Package
@@ -114,13 +117,16 @@ def main():
                 linha = str(time.asctime(time.localtime(time.time()))) + ' - ' + 'Pacote ' + str(i+1) + ' enviado' + ' /tipo3' + ' /' + str(tamanho_img % 114)
                 arquivo.write(linha + '\n')
 
+                # Payload
+                payload = bytearray(img[i*114:(i+1)*114])
+                crc = calcular_CRC(payload)
+
                 txBuffer = []
-                # Head = [tipo, remetente, livre, total_pacotes, numero_pacote, id_ou_tamanho, pacote_erro, ultimo_pacote][10]
-                head = cria_head('tipo3', 'livre', 0, pacotes_totais, i+1, tamanho_img % 114, 0, 0)
+                # Head = [tipo, remetente, livre, total_pacotes, numero_pacote, id_ou_tamanho, pacote_erro, ultimo_pacote][10], crc[2]
+                head = cria_head('tipo3', 'livre', 0, pacotes_totais, i+1, tamanho_img % 114, 0, 0, crc)
                 txBuffer = head
 
                 # Payload
-                payload = bytearray(img[i*114:])
                 txBuffer += payload
 
                 #End of Package
@@ -147,8 +153,8 @@ def main():
 
                 if time.time() - time_start2 > 20:
                     txBuffer = []
-                    # Head = [tipo, remetente, livre, total_pacotes, numero_pacote, id_ou_tamanho, pacote_erro, ultimo_pacote][10]
-                    head = cria_head('tipo5', 'livre', 0, pacotes_totais, i+1, tamanho_img % 114, 0, 0)
+                    # Head = [tipo, remetente, livre, total_pacotes, numero_pacote, id_ou_tamanho, pacote_erro, ultimo_pacote][10], crc[2]
+                    head = cria_head('tipo5', 'livre', 0, pacotes_totais, i+1, tamanho_img % 114, 0, 0, [0,0])
                     txBuffer = head
 
                     # Payload
@@ -168,7 +174,7 @@ def main():
                     exit()
                     
             head = com3.getData(10)[0]
-            tipo, remetente, livre, total_pacotes, numero_pacote, id_ou_tamanho, pacote_erro, ultimo_pacote = le_head(head)
+            tipo, remetente, livre, total_pacotes, numero_pacote, id_ou_tamanho, pacote_erro, ultimo_pacote, crc = le_head(head)
             com3.getData(4)
 
             if tipo == 4:

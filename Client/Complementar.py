@@ -1,4 +1,6 @@
 import numpy as np
+import crcmod
+
 
 ### CRIAR HEAD ###
 def cria_head(tipo, remetente, livre, total_pacotes, numero_pacote, id_ou_tamanho, pacote_erro, ultimo_pacote, crc):
@@ -43,7 +45,7 @@ def cria_head(tipo, remetente, livre, total_pacotes, numero_pacote, id_ou_tamanh
     head += bytearray([ultimo_pacote])
 
     ### CRC ###
-    head += bytearray([crc])
+    head += bytearray(crc)
 
     return head
 
@@ -62,20 +64,12 @@ def le_head(head):
     id_ou_tamanho = head[5]
     pacote_erro = head[6]
     ultimo_pacote = head[7]
+    crc = head[8:]
 
-    return tipo, remetente, livre, total_pacotes, numero_pacote, id_ou_tamanho, pacote_erro, ultimo_pacote
+    return tipo, remetente, livre, total_pacotes, numero_pacote, id_ou_tamanho, pacote_erro, ultimo_pacote, crc
 
 ### FAZ CRC ###
-def crc(data: bytes) -> int:
-    crc = 0xFFFF  # valor inicial do CRC
-    polynomial = 0x1021  # polinômio usado para cálculo do CRC
-
-    for byte in data:
-        crc ^= byte << 8  # XOR com o byte deslocado 8 bits à esquerda
-        for _ in range(8):
-            if crc & 0x8000:
-                crc = (crc << 1) ^ polynomial
-            else:
-                crc <<= 1
-
-    return crc & 0xFFFF  # retorna o CRC com 16 bits
+def calcular_CRC(dados):
+    crc_func = crcmod.predefined.mkCrcFun('crc-16') # Escolha o tipo de CRC que você deseja calcular
+    crc = crc_func(dados) # Calcule o CRC para os dados de entrada
+    return crc.to_bytes(2, byteorder='big') # Retorne o CRC em 2 bytes
