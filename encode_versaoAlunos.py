@@ -37,8 +37,8 @@ def generateSin(freq, time, fs):
     n = time*fs #numero de pontos
     x = np.linspace(0.0, time, n)  # eixo do tempo
     s = np.sin(freq*x*2*np.pi)
-    plt.figure()
-    plt.plot(x,s)
+    # plt.figure()
+    # plt.plot(x,s)
     return (x, s)
 
 
@@ -129,7 +129,6 @@ def main():
 
     plt.figure("Transformada de Fourier")
     plt.stem(X, np.abs(Y))
-    plt.xlim(-15, 15)
     # plt.plot(t, np.abs(np.fft.fft(tone)))
     plt.title("Transformada de Fourier")
     plt.xlabel("Frequência (Hz)")
